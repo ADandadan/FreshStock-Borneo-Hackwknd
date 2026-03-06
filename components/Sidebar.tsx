@@ -19,28 +19,29 @@ import AttachMoneyRoundedIcon from '@mui/icons-material/AttachMoneyRounded';
 import BarChartRoundedIcon from '@mui/icons-material/BarChartRounded';
 import WarningAmberRoundedIcon from '@mui/icons-material/WarningAmberRounded';
 import StorefrontRoundedIcon from '@mui/icons-material/StorefrontRounded';
-import { OverridableComponent } from '@mui/material/OverridableComponent';
-import { Divider, SvgIconTypeMap } from '@mui/material';
+import Divider from '@mui/material/Divider';
 import { ReactElement } from 'react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 const drawerWidth = 220;
 
-const navItems: navItem[] = [
-  { label: 'Dashboard', icon: <DashboardRoundedIcon fontSize="small" />, active: true },
-  { label: 'Product Stock', icon: <Inventory2OutlinedIcon fontSize="small" /> },
-  { label: 'Stock Prediction', icon: <TrendingUpOutlinedIcon fontSize="small" />/*, colored: '#f97316'*/ },
-  { label: 'Waste Tracker', icon: <DeleteOutlineRoundedIcon fontSize="small" /> },
-  { label: 'Supplier Prices', icon: <AttachMoneyRoundedIcon fontSize="small" />,/* colored: '#22c55e'*/ },
-  { label: 'Sales Tracker', icon: <BarChartRoundedIcon fontSize="small" /> },
-  { label: 'Situation Solver', icon: <WarningAmberRoundedIcon fontSize="small" /> },
-];
+type NavItem = {
+  label: string;
+  icon: ReactElement;
+  colored?: string;
+  href: string;
+};
 
-type navItem = {
-	label: string,
-	icon: ReactElement,
-	active?: boolean,
-	colored?: string
-}
+const navItems: NavItem[] = [
+  { label: 'Dashboard',       icon: <DashboardRoundedIcon fontSize="small" />,     href: '/' },
+  { label: 'Product Stock',   icon: <Inventory2OutlinedIcon fontSize="small" />,   href: '/product-stock' },
+  { label: 'Stock Prediction',icon: <TrendingUpOutlinedIcon fontSize="small" />,   href: '/stock-prediction' },
+  { label: 'Waste Tracker',   icon: <DeleteOutlineRoundedIcon fontSize="small" />, href: '/waste-tracker' },
+  { label: 'Supplier Prices', icon: <AttachMoneyRoundedIcon fontSize="small" />,   href: '/supplier-prices' },
+  { label: 'Sales Tracker',   icon: <BarChartRoundedIcon fontSize="small" />,      href: '/sales-tracker' },
+  { label: 'Situation Solver',icon: <WarningAmberRoundedIcon fontSize="small" />,  href: '/situation-solver' },
+];
 
 interface Props {
   window?: () => Window;
@@ -48,23 +49,19 @@ interface Props {
 
 export default function Sidebar(props: Props) {
   const { window } = props;
+  const pathname = usePathname();
+
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [isClosing, setIsClosing] = React.useState(false);
 
-  const handleDrawerClose = () => {
-    setIsClosing(true);
-    setMobileOpen(false);
-  };
-
+  const handleDrawerClose = () => { setIsClosing(true); setMobileOpen(false); };
   const handleDrawerTransitionEnd = () => setIsClosing(false);
-
-  const handleDrawerToggle = () => {
-    if (!isClosing) setMobileOpen(!mobileOpen);
-  };
+  const handleDrawerToggle = () => { if (!isClosing) setMobileOpen(!mobileOpen); };
 
   const drawer = (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%', py: 2.5, px: 1.5 }}>
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, px: 1}}>
+      {/* Logo */}
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, px: 1 }}>
         <Box sx={{
           width: 40, height: 40, borderRadius: '50%',
           background: 'linear-gradient(135deg, #fb923c, #f97316)',
@@ -84,45 +81,51 @@ export default function Sidebar(props: Props) {
         </Box>
       </Box>
 
-	  <Divider sx={{ my: 2}}/>
+      <Divider sx={{ my: 2 }} />
 
-      <List sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
-        {navItems.map(({ label, icon, active, colored }) => (
-          <ListItem key={label} disablePadding>
-            <ListItemButton
-              sx={{
-                borderRadius: '10px',
-                px: 1.5,
-                py: 1,
-                backgroundColor: active ? '#f97316' : 'transparent',
-                '&:hover': {
-                  backgroundColor: active ? '#ea6c0a' : 'rgba(249,115,22,0.08)',
-                },
-                transition: 'background-color 0.18s ease',
-              }}
-            >
-              <ListItemIcon sx={{
-                minWidth: 32,
-                color: active ? '#fff' : (colored || '#64748b'),
-              }}>
-                {icon}
-              </ListItemIcon>
-              <ListItemText
-                primary={label}
-                slotProps={{
-                  primary: {
-                    sx: {
-                      fontFamily: '"Nunito", sans-serif',
-                      fontWeight: active ? 700 : 500,
-                      fontSize: '0.875rem',
-                      color: active ? '#fff' : (colored || '#374151'),
-                    }
-                  }
+      {/* Nav Items */}
+      <List disablePadding sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+        {navItems.map(({ label, icon, colored, href }) => {
+          // Exact match for '/', prefix match for everything else
+          const active = href === '/' ? pathname === '/' : pathname.startsWith(href);
+
+          return (
+            <ListItem key={label} disablePadding>
+              <ListItemButton
+                component={Link}
+                href={href}
+                onClick={() => setMobileOpen(false)}
+                sx={{
+                  borderRadius: '10px',
+                  px: 1.5,
+                  py: 1,
+                  backgroundColor: active ? '#f97316' : 'transparent',
+                  '&:hover': {
+                    backgroundColor: active ? '#ea6c0a' : 'rgba(249,115,22,0.08)',
+                  },
+                  transition: 'background-color 0.18s ease',
                 }}
-              />
-            </ListItemButton>
-          </ListItem>
-        ))}
+              >
+                <ListItemIcon sx={{ minWidth: 32, color: active ? '#fff' : (colored || '#64748b') }}>
+                  {icon}
+                </ListItemIcon>
+                <ListItemText
+                  primary={label}
+                  slotProps={{
+                    primary: {
+                      sx: {
+                        fontFamily: '"Nunito", sans-serif',
+                        fontWeight: active ? 700 : 500,
+                        fontSize: '0.875rem',
+                        color: active ? '#fff' : (colored || '#374151'),
+                      }
+                    }
+                  }}
+                />
+              </ListItemButton>
+            </ListItem>
+          );
+        })}
       </List>
     </Box>
   );
@@ -138,15 +141,17 @@ export default function Sidebar(props: Props) {
         <IconButton
           aria-label="open drawer"
           onClick={handleDrawerToggle}
-          sx={{ position: 'fixed', top: 10, left: 10, display: { sm: 'none' }, zIndex: 1200 }}
+          sx={{
+            backgroundColor: 'white',
+            '&:hover': { backgroundColor: '#f3f2f1' },
+            position: 'fixed', top: 10, left: 10,
+            display: { sm: 'none' }, zIndex: 1200,
+          }}
         >
           <MenuIcon />
         </IconButton>
 
-        <Box
-          component="nav"
-          sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
-        >
+        <Box component="nav" sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}>
           <Drawer
             container={container}
             variant="temporary"
@@ -155,10 +160,7 @@ export default function Sidebar(props: Props) {
             onClose={handleDrawerClose}
             sx={{
               display: { xs: 'block', sm: 'none' },
-              '& .MuiDrawer-paper': {
-                boxSizing: 'border-box', width: drawerWidth,
-                border: 'none', boxShadow: '4px 0 24px rgba(0,0,0,0.08)',
-              },
+              '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth, border: 'none', boxShadow: '4px 0 24px rgba(0,0,0,0.08)' },
             }}
             slotProps={{ root: { keepMounted: true } }}
           >
@@ -169,10 +171,7 @@ export default function Sidebar(props: Props) {
             variant="permanent"
             sx={{
               display: { xs: 'none', sm: 'block' },
-              '& .MuiDrawer-paper': {
-                boxSizing: 'border-box', width: drawerWidth,
-                border: 'none', boxShadow: '4px 0 20px rgba(0,0,0,0.06)',
-              },
+              '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth, border: 'none', boxShadow: '4px 0 20px rgba(0,0,0,0.06)' },
             }}
             open
           >
