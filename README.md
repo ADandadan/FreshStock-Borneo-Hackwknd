@@ -1,36 +1,72 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# FreshStock
+
+FreshStock is a Next.js web app developed specifically for [BorNEO HackWknd 2026](https://www.borneohackwknd.org/) hackathon. This web app is a working prototype to showcase some of the features that assist businesses in reducing food wastage through the usage of data and AI. The major features are product stock tracker, product stock prediction, waste tracker, supplier prices intelligence, sales tracker, and situation solver. Only waste tracker has proper implementation of AI, whereas the other features are only using placeholders as simulation. Some mock data are provided to demonstrate the features easier.
 
 ## Getting Started
 
-First, run the development server:
+First, install dependencies:
+```bash
+npm install
+# or
+yarn install
+# or
+pnpm install
+```
 
+Then, run the development server:
 ```bash
 npm run dev
 # or
 yarn dev
 # or
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) in your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Tech Stack
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- [Next.js](https://nextjs.org/) - React framework
+- [TypeScript](https://www.typescriptlang.org/) - Type safety
+- [Tailwind CSS](https://tailwindcss.com/) - Styling
+- [Material UI](https://mui.com/) - React Components
+- [Lucide](https://lucide.dev/) - Icons
+- [Gemini API](https://ai.google.dev/gemini-api/) - AI functions
+- [Recharts](https://recharts.github.io/) - React Charting Library
+- [ESLint](https://eslint.org/) - Linting
 
-## Learn More
+## Project Structure
 
-To learn more about Next.js, take a look at the following resources:
+```
+├── app/
+│   ├── layout.tsx
+│   ├── page.tsx
+│   └── globals.css
+├── components/
+├── lib/
+    └── api/
+├── public/
+└── README.md
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Environment Variables
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Copy `.env.example` to `.env` and fill in the required values:
 
-## Deploy on Vercel
+```
+GEMINI_API_KEY=YOUR_API_KEY
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Replace `YOUR_API_KEY` with your Google Gemini API Key. You can generate one through [Google's AI Studio](https://aistudio.google.com/app/apikey).
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Deployment
+
+The easiest way to deploy is via [Vercel](https://vercel.com):
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new)
+
+See the [Next.js deployment docs](https://nextjs.org/docs/app/building-your-application/deploying) for other options.
+
+## AI Disclosure
+
+Parts of the codebase are assisted with OpenAI's GPT-5.3 Instant and Anthropic's Claude Sonnet 4.6
