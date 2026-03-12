@@ -9,6 +9,26 @@ interface WasteLog {
   costLost: number; wasteRate: number; aiSuggestion: string; date: string;
 }
 
+const WASTE_LOGS_KEY = 'freshstock_waste_logs';
+
+const DEFAULT_LOGS: WasteLog[] = [
+  {
+    id: 'mock-1', productName: 'Fresh Tomatoes', quantity: 5, reason: 'Spoiled',
+    costLost: 15.00, wasteRate: 10.0, aiSuggestion: 'Check storage temperatures immediately. Compost if organic & safe.',
+    date: new Date().toLocaleDateString('en-MY')
+  },
+  {
+    id: 'mock-2', productName: 'Nasi Lemak Pre-pack', quantity: 12, reason: 'Unsold',
+    costLost: 36.00, wasteRate: 24.0, aiSuggestion: 'Donate to local food banks or sell on surplus apps at 50% off.',
+    date: new Date().toLocaleDateString('en-MY')
+  },
+  {
+    id: 'mock-3', productName: 'Cabbage Heads', quantity: 3, reason: 'Expired',
+    costLost: 9.00, wasteRate: 6.0, aiSuggestion: 'Convert to compost (Buat Baja) for community gardens.',
+    date: new Date().toLocaleDateString('en-MY')
+  }
+];
+
 export default function WasteTrackerPage() {
   async function handleSubmit(context: string) {
     const res = await fetch("/api/gemini", {
@@ -19,20 +39,17 @@ export default function WasteTrackerPage() {
     return result
   }
 
-
   const [products, setProducts] = useState<Product[]>([]);
   const [selectedProductId, setSelectedProductId] = useState('');
   const [quantity, setQuantity] = useState('');
   const [totalBatchStock, setTotalBatchStock] = useState(''); 
   const [reason, setReason] = useState('');
   
-  // Derive selected product and auto-calculated values
   const selectedProduct = products.find(p => p.id === Number(selectedProductId)) || null;
   const calculatedCost = selectedProduct && quantity
     ? (Number(quantity) * selectedProduct.sellingPrice).toFixed(2)
     : '';
 
-  // Auto-fill totalBatchStock and reset quantity when product changes
   useEffect(() => {
     if (selectedProduct) {
       setTotalBatchStock(selectedProduct.inStock.toString());
@@ -42,24 +59,21 @@ export default function WasteTrackerPage() {
     }
   }, [selectedProductId]);
   
-  // Added pre-filled data to show off the AI immediately!
-  const [wasteLogs, setWasteLogs] = useState<WasteLog[]>([
-    {
-      id: 'mock-1', productName: 'Fresh Tomatoes', quantity: 5, reason: 'Spoiled',
-      costLost: 15.00, wasteRate: 10.0, aiSuggestion: 'Check storage temperatures immediately. Compost if organic & safe.',
-      date: new Date().toLocaleDateString('en-MY')
-    },
-    {
-      id: 'mock-2', productName: 'Nasi Lemak Pre-pack', quantity: 12, reason: 'Unsold',
-      costLost: 36.00, wasteRate: 24.0, aiSuggestion: 'Donate to local food banks or sell on surplus apps at 50% off.',
-      date: new Date().toLocaleDateString('en-MY')
-    },
-    {
-      id: 'mock-3', productName: 'Cabbage Heads', quantity: 3, reason: 'Expired',
-      costLost: 9.00, wasteRate: 6.0, aiSuggestion: 'Convert to compost (Buat Baja) for community gardens.',
-      date: new Date().toLocaleDateString('en-MY')
+  // Load from localStorage on mount, fall back to DEFAULT_LOGS
+  const [wasteLogs, setWasteLogs] = useState<WasteLog[]>(() => {
+    if (typeof window === 'undefined') return DEFAULT_LOGS;
+    try {
+      const saved = localStorage.getItem(WASTE_LOGS_KEY);
+      return saved ? JSON.parse(saved) : DEFAULT_LOGS;
+    } catch {
+      return DEFAULT_LOGS;
     }
-  ]);
+  });
+
+  // Persist to localStorage whenever wasteLogs changes
+  useEffect(() => {
+    localStorage.setItem(WASTE_LOGS_KEY, JSON.stringify(wasteLogs));
+  }, [wasteLogs]);
 
   useEffect(() => {
     const saved = localStorage.getItem('freshstock_products');
@@ -77,12 +91,9 @@ export default function WasteTrackerPage() {
 
     const qty = parseFloat(quantity);
 
-    // Validate quantity doesn't exceed stock
     if (qty > product.inStock) return alert(`Waste quantity cannot exceed stock (${product.inStock} units)`);
 
-    const cost = parseFloat(calculatedCost);
     const batchStock = parseFloat(totalBatchStock);
-    
     const totalCostLost = qty * product.sellingPrice;
     const calculatedWasteRate = (qty / batchStock) * 100;
 
@@ -97,12 +108,12 @@ export default function WasteTrackerPage() {
       date: new Date().toLocaleDateString('en-MY')
     };
 
-    setWasteLogs([newLog, ...wasteLogs]);
+    setWasteLogs(prev => [newLog, ...prev]);
     setQuantity(''); setReason(''); setTotalBatchStock('');
     setSelectedProductId('');
   };
 
-  const removeLog = (id: string) => setWasteLogs(wasteLogs.filter(log => log.id !== id));
+  const removeLog = (id: string) => setWasteLogs(prev => prev.filter(log => log.id !== id));
   const totalFinancialLoss = wasteLogs.reduce((sum, log) => sum + log.costLost, 0);
 
   return (
