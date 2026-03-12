@@ -134,6 +134,12 @@ export default function SalesTrackerPage() {
   const salesScore = totalQuantitySold > 100 ? 100 : (totalQuantitySold / 100) * 100;
   const foodSecurityScore = Math.round((wasteScore + stockScore + salesScore) / 3) || 0;
 
+  useEffect(() => {
+      localStorage.setItem("freshstock_misc", JSON.stringify({wasteRate: wasteRate}));
+      localStorage.setItem("freshstock_misc", JSON.stringify({totalRevenue: totalRevenue}));
+      localStorage.setItem("freshstock_misc", JSON.stringify({foodSecurityScore: foodSecurityScore}));
+    }, [{wasteRate: 0, totalRevenue: 0, foodSecurityScore: 100}])
+
   if (!isLoaded) return <div className="ml-64 p-8">Loading...</div>;
 
   return (
