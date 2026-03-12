@@ -441,10 +441,10 @@ export default function DashboardPage() {
                 </Box>
                 <Box sx={{ textAlign: "right" }}>
                   <Typography sx={{ fontFamily: '"Nunito", sans-serif', fontWeight: 700, fontSize: "0.9rem", color: "#1c1007" }}>
-                    {item.revenue}
+                    RM {item.revenue.toFixed(2)}
                   </Typography>
                   <Typography sx={{ fontFamily: '"Nunito", sans-serif', fontSize: "0.78rem", color: "#9e8674", fontWeight: 500 }}>
-                    {item.quantitySold}
+                    {item.quantitySold} units
                   </Typography>
                 </Box>
               </Box>
