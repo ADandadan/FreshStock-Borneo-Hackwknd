@@ -2,6 +2,8 @@
 
 FreshStock is a Next.js web app developed specifically for [BorNEO HackWknd 2026](https://www.borneohackwknd.org/) hackathon. This web app is a working prototype to showcase some of the features that assist businesses in reducing food wastage through the usage of data and AI. The major features are product stock tracker, product stock prediction, waste tracker, supplier prices intelligence, sales tracker, and situation solver. Only waste tracker has proper implementation of AI, whereas the other features are only using placeholders as simulation. Some mock data are provided to demonstrate the features easier.
 
+[Public website here](https://freshstock-bh.netlify.app/)
+
 ## Getting Started
 
 First, install dependencies:
