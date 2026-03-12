@@ -13,19 +13,6 @@ import { useEffect, useState } from "react";
 
 const drawerWidth = 220;
 
-let wasteRate = 10.4;
-let foodSecurityScore = 25;
-
-let itemSales = [
-            { name: "Chicken Rice", date: "2026-03-03", amount: "RM 227.50", units: "35 sold" },
-            { name: "Nasi Lemak",   date: "2026-03-03", amount: "RM 210.00", units: "42 sold" },
-            { name: "Chicken Rice", date: "2026-03-02", amount: "RM 182.00", units: "28 sold" },
-];
-
-let wasteItems = [
-            { name: "Nasi Lemak", status: "Unsold", amount: "-RM 10.00", units: "5 units" },
-];
-
 const quickActions = [
   {
     title: "Manage Products",
@@ -71,24 +58,42 @@ function getScoreProgressColor(score: number) {
   };
 }
 
-const scoreColor = getScoreProgressColor(foodSecurityScore);
+interface SaleEntry {
+  id: string;
+  date: string;
+  productId: number;
+  productName: string;
+  sellingPrice: number;
+  quantitySold: number;
+  revenue: number;
+}
+
+interface WasteLog {
+  id: string; productName: string; quantity: number; reason: string;
+  costLost: number; wasteRate: number; aiSuggestion: string; date: string;
+}
 
 export default function DashboardPage() {
   const [totalProducts, setTotalProducts] = useState(0);
   const [currentStock, setCurrentStock] = useState(0);
+  const [sales, setSales] = useState<SaleEntry[]>([]);
   const [totalRevenue, setTotalRevenue] = useState(0);
+  const [wasteRate, setWasteRate] = useState(0);
+  const [foodSecurityScore, setFoodSecurityScore] = useState(100);
+  const [wasteLogs, setWasteLogs] = useState<WasteLog[]>([]);
 
   useEffect(() => {
-      const saved = localStorage.getItem('freshstock_products');
-      if (saved) {
+      const savedProducts = localStorage.getItem('freshstock_products');
+      const savedSales = localStorage.getItem('freshstock_sales');
+      const savedWaste = localStorage.getItem('freshstock_waste');
+      const savedMisc = localStorage.getItem('freshstock_misc');
+      if (savedProducts) {
         try {
-          const data = JSON.parse(saved);
-          console.log(data);
+          const data = JSON.parse(savedProducts);
           const totals = data.reduce((sum: any, obj: any) => ({
             totalRevenue: sum.totalRevenue + obj.sellingPrice,
             currentStock: sum.currentStock + obj.inStock
           }), { totalRevenue: 0, currentStock: 0 })
-          console.log(totals);
           setTotalProducts(data.length);
           setCurrentStock(totals.currentStock);
           setTotalRevenue(totals.totalRevenue)
@@ -96,7 +101,24 @@ export default function DashboardPage() {
           console.error("Failed to load products", e);
         }
       }
+
+      if (savedSales) setSales(JSON.parse(savedSales))
+      if (savedWaste) setWasteLogs(JSON.parse(savedWaste));
+      if (savedMisc) {
+        const data = JSON.parse(savedMisc);
+        if (data.hasOwnProperty("totalRevenue")) {
+          setTotalRevenue(data["totalRevenue"]);
+        }
+        if (data.hasOwnProperty("wasteRate")) {
+          setWasteRate(data["wasteRate"]);
+        }
+        if (data.hasOwnProperty("foodSecurityScore")) {
+          setFoodSecurityScore(data["foodSecurityScore"]);
+        }
+      }
   }, []);
+
+  const scoreColor = getScoreProgressColor(foodSecurityScore);
 
   const statCards = [
   {
@@ -406,12 +428,12 @@ export default function DashboardPage() {
           <Typography sx={{ fontFamily: '"Nunito", sans-serif', fontSize: "0.8rem", color: "#f97316", fontWeight: 600, mb: 2 }}>
             Latest transactions
           </Typography>
-          {itemSales.map((item, i, arr) => (
+          {sales.map((item, i, arr) => (
             <Box key={i}>
               <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", py: 1.5 }}>
                 <Box>
                   <Typography sx={{ fontFamily: '"Nunito", sans-serif', fontWeight: 700, fontSize: "0.9rem", color: "#1c1007" }}>
-                    {item.name}
+                    {item.productName}
                   </Typography>
                   <Typography sx={{ fontFamily: '"Nunito", sans-serif', fontSize: "0.78rem", color: "#f59e0b", fontWeight: 600 }}>
                     {item.date}
@@ -419,10 +441,10 @@ export default function DashboardPage() {
                 </Box>
                 <Box sx={{ textAlign: "right" }}>
                   <Typography sx={{ fontFamily: '"Nunito", sans-serif', fontWeight: 700, fontSize: "0.9rem", color: "#1c1007" }}>
-                    {item.amount}
+                    {item.revenue}
                   </Typography>
                   <Typography sx={{ fontFamily: '"Nunito", sans-serif', fontSize: "0.78rem", color: "#9e8674", fontWeight: 500 }}>
-                    {item.units}
+                    {item.quantitySold}
                   </Typography>
                 </Box>
               </Box>
@@ -444,27 +466,27 @@ export default function DashboardPage() {
           }}
         >
           <Typography sx={{ fontFamily: '"Nunito", sans-serif', fontWeight: 800, fontSize: "1rem", color: "#1c1007", mb: 0.3 }}>
-            Waste Alerts
+            Waste Alert
           </Typography>
           <Typography sx={{ fontFamily: '"Nunito", sans-serif', fontSize: "0.8rem", color: "#f97316", fontWeight: 600, mb: 2 }}>
             Items requiring attention
           </Typography>
-          {wasteItems.map((item, i) => (
+          {wasteLogs.map((item, i) => (
             <Box key={i} sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", py: 1.5 }}>
               <Box>
                 <Typography sx={{ fontFamily: '"Nunito", sans-serif', fontWeight: 700, fontSize: "0.9rem", color: "#1c1007" }}>
-                  {item.name}
+                  {item.productName}
                 </Typography>
                 <Typography sx={{ fontFamily: '"Nunito", sans-serif', fontSize: "0.78rem", color: "#9e8674", fontWeight: 500 }}>
-                  {item.status}
+                  {item.reason}
                 </Typography>
               </Box>
               <Box sx={{ textAlign: "right" }}>
                 <Typography sx={{ fontFamily: '"Nunito", sans-serif', fontWeight: 700, fontSize: "0.9rem", color: "#ef4444" }}>
-                  {item.amount}
+                  -RM {item.costLost.toFixed(2)}
                 </Typography>
                 <Typography sx={{ fontFamily: '"Nunito", sans-serif', fontSize: "0.78rem", color: "#9e8674", fontWeight: 500 }}>
-                  {item.units}
+                  {item.quantity} units
                 </Typography>
               </Box>
             </Box>
