@@ -30,12 +30,6 @@ export default function SalesTrackerPage() {
     if (savedProducts) setProducts(JSON.parse(savedProducts));
     if (savedSales) setSales(JSON.parse(savedSales));
     
-    // Fallback dummy data for sales if empty
-    if (!savedSales) {
-        setSales([
-            { id: "s1", date: new Date().toISOString().split("T")[0], productId: 1, productName: "Fresh Tomatoes", sellingPrice: 5.0, quantitySold: 10, revenue: 50.0 }
-        ]);
-    }
 
     if (savedWaste) setWasteLogs(JSON.parse(savedWaste));
     
@@ -43,8 +37,9 @@ export default function SalesTrackerPage() {
   }, []);
 
   useEffect(() => {
-    if (isLoaded) {
-      localStorage.setItem('freshstock_sales', JSON.stringify(sales));
+    const salesJSON = JSON.stringify(sales);
+    if (isLoaded && salesJSON !== "[]") {
+      localStorage.setItem('freshstock_sales', salesJSON);
     }
   }, [sales, isLoaded]);
 
@@ -108,7 +103,7 @@ export default function SalesTrackerPage() {
   // Food Security Score Logic
   const wasteScore = Math.max(0, 100 - parseFloat(wasteRate as string) * 5);
   const stockScore = products.every((p) => p.inStock > 10) ? 100 : 70;
-  const salesScore = totalQuantitySold > 100 ? 100 : (totalQuantitySold / 100) * 100;
+  const salesScore = totalQuantitySold === 0 ? 100 : Math.min(100, (totalQuantitySold / 100) * 100);
   const foodSecurityScore = Math.round((wasteScore + stockScore + salesScore) / 3) || 0;
 
   useEffect(() => {

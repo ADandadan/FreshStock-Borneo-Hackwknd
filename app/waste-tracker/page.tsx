@@ -6,24 +6,6 @@ import { WasteLog, Product } from '@/constants';
 
 const WASTE_LOGS_KEY = 'freshstock_waste';
 
-const DEFAULT_LOGS: WasteLog[] = [
-  {
-    id: 'mock-1', productName: 'Fresh Tomatoes', quantity: 5, reason: 'Spoiled',
-    costLost: 15.00, wasteRate: 10.0, aiSuggestion: 'Check storage temperatures immediately. Compost if organic & safe.',
-    date: new Date().toLocaleDateString('en-MY')
-  },
-  {
-    id: 'mock-2', productName: 'Nasi Lemak Pre-pack', quantity: 12, reason: 'Unsold',
-    costLost: 36.00, wasteRate: 24.0, aiSuggestion: 'Donate to local food banks or sell on surplus apps at 50% off.',
-    date: new Date().toLocaleDateString('en-MY')
-  },
-  {
-    id: 'mock-3', productName: 'Cabbage Heads', quantity: 3, reason: 'Expired',
-    costLost: 9.00, wasteRate: 6.0, aiSuggestion: 'Convert to compost (Buat Baja) for community gardens.',
-    date: new Date().toLocaleDateString('en-MY')
-  }
-];
-
 export default function WasteTrackerPage() {
   async function handleSubmit(context: string) {
     const res = await fetch("/api/gemini", {
@@ -56,18 +38,20 @@ export default function WasteTrackerPage() {
   
   // Load from localStorage on mount, fall back to DEFAULT_LOGS
   const [wasteLogs, setWasteLogs] = useState<WasteLog[]>(() => {
-    if (typeof window === 'undefined') return DEFAULT_LOGS;
     try {
       const saved = localStorage.getItem(WASTE_LOGS_KEY);
-      return saved ? JSON.parse(saved) : DEFAULT_LOGS;
+      return saved ? JSON.parse(saved) : [];
     } catch {
-      return DEFAULT_LOGS;
+      return [];
     }
   });
 
   // Persist to localStorage whenever wasteLogs changes
   useEffect(() => {
-    localStorage.setItem(WASTE_LOGS_KEY, JSON.stringify(wasteLogs));
+    const wasteJSON = JSON.stringify(wasteLogs);
+    if (wasteJSON !== "[]") {
+      localStorage.setItem(WASTE_LOGS_KEY, JSON.stringify(wasteLogs));
+    }
   }, [wasteLogs]);
 
   useEffect(() => {

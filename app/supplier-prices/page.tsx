@@ -22,20 +22,14 @@ export default function SupplierPricesPage() {
     const saved = localStorage.getItem('freshstock_suppliers');
     if (saved) {
       setSuppliers(JSON.parse(saved));
-    } else {
-      // If no memory exists (first time visitor), load the cool defaults
-      setSuppliers([
-        { id: '1', name: 'Borneo Agri-Coop', ingredient: 'White Rice (10kg)', prevPrice: 28.00, currentPrice: 35.00, percentIncrease: 25.0, marginImpact: 7.00 },
-        { id: '2', name: 'Ipoh Poultry', ingredient: 'Fresh Chicken (1kg)', prevPrice: 8.50, currentPrice: 9.80, percentIncrease: 15.3, marginImpact: 1.30 },
-        { id: '3', name: 'Cameron Greens', ingredient: 'Cabbage (1kg)', prevPrice: 3.00, currentPrice: 4.50, percentIncrease: 50.0, marginImpact: 1.50 }
-      ]);
     }
     setIsLoaded(true);
   }, []);
 
   // 2. SAVE DATA every time the 'suppliers' list changes
   useEffect(() => {
-    if (isLoaded) {
+    const suppliersJSON = JSON.stringify(suppliers);
+    if (isLoaded && suppliersJSON !== "[]") {
       localStorage.setItem('freshstock_suppliers', JSON.stringify(suppliers));
     }
   }, [suppliers, isLoaded]);

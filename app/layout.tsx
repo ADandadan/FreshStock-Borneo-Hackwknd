@@ -3,6 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Sidebar from "@/components/Sidebar";
 import { Box } from "@mui/material";
+import { DemoDataButton } from "@/components/DemoDataButton";
+import { AppRouterCacheProvider } from "@mui/material-nextjs/v13-appRouter";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,12 +29,15 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <Box sx={{ display: 'flex' }}>
-          <Sidebar />
-          <Box component="main" sx={{ flexGrow: 1, minWidth: 0 }}>
-            {children}
+        <AppRouterCacheProvider>
+          <Box sx={{ display: 'flex' }}>
+            <Sidebar />
+            <Box component="main" sx={{ flexGrow: 1, minWidth: 0 }}>
+              {children}
+            </Box>
+            <DemoDataButton></DemoDataButton>
           </Box>
-        </Box>
+        </AppRouterCacheProvider>
       </body>
     </html>
   );
