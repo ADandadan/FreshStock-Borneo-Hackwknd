@@ -1,33 +1,83 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { TrendingUp, AlertTriangle, CheckCircle, Trash2 } from 'lucide-react';
-import { Product, PredictionResult } from '@/constants';
+import { TrendingUp, AlertTriangle, CheckCircle, Trash2, Sparkles } from 'lucide-react';
+import { Product, PredictionResult, SaleEntry } from '@/constants';
 
 export default function StockPredictionPage() {
   const [products, setProducts] = useState<Product[]>([]);
+  const [sales, setSales] = useState<SaleEntry[]>([]);
   const [selectedProductId, setSelectedProductId] = useState('');
   const [totalSold, setTotalSold] = useState('');
   const [numDays, setNumDays] = useState('7');
-  
-  // Array to hold multiple results
   const [predictions, setPredictions] = useState<PredictionResult[]>([]);
 
+  // Load both Products AND Sales from localStorage
   useEffect(() => {
-    const saved = localStorage.getItem('freshstock_products');
-    if (saved) {
-      setProducts(JSON.parse(saved));
-    }
+    const savedProducts = localStorage.getItem('freshstock_products');
+    const savedSales = localStorage.getItem('freshstock_sales');
+    
+    if (savedProducts) setProducts(JSON.parse(savedProducts));
+    if (savedSales) setSales(JSON.parse(savedSales));
   }, []);
 
+  // --- Logic: Manual Prediction ---
   const handleCalculate = () => {
     const product = products.find(p => p.id.toString() === selectedProductId);
     if (!product || !totalSold || !numDays) return alert("Please fill in all fields");
 
     const sold = parseFloat(totalSold);
     const days = parseInt(numDays);
+    addPredictionToState(product, sold, days);
+    
+    setTotalSold(''); // Reset input
+  };
+
+  // --- Logic: Auto Prediction ---
+  const handleAutoCalculate = () => {
+    if (sales.length === 0) return alert("No sales data found to calculate predictions.");
+
+    const newAutoPredictions: PredictionResult[] = [];
+
+    products.forEach(product => {
+      // 1. Get all sales for THIS product
+      const productSales = sales.filter(s => s.productId === product.id);
+      
+      if (productSales.length > 0) {
+        // 2. Sum the total quantity sold
+        const totalQtySold = productSales.reduce((sum, s) => sum + s.quantitySold, 0);
+        
+        // 3. Find the date range (how many days of sales we have recorded)
+        const uniqueDates = new Set(productSales.map(s => s.date));
+        const days = uniqueDates.size || 1; // Avoid division by zero
+
+        // 4. Calculate
+        const avgSales = totalQtySold / days;
+        const weeklyNeeded = Math.ceil(avgSales * 7);
+        const shortage = weeklyNeeded > product.inStock;
+
+        newAutoPredictions.push({
+          id: `auto-${product.id}-${Date.now()}`,
+          productName: product.name,
+          avgDailySales: avgSales,
+          currentStock: product.inStock,
+          nextWeekNeeded: weeklyNeeded,
+          isShortage: shortage
+        });
+      }
+    });
+
+    if (newAutoPredictions.length === 0) {
+        alert("Products are registered, but no sales have been logged for them yet.");
+    } else {
+        setPredictions([...newAutoPredictions, ...predictions]);
+    }
+  };
+
+  // Helper to add a prediction to the list
+  const addPredictionToState = (product: Product, sold: number, days: number) => {
     const avgSales = sold / days;
-    const weeklyNeeded = Math.ceil(avgSales * days);
+    const weeklyNeeded = Math.ceil(avgSales * 7);
     const shortage = weeklyNeeded > product.inStock;
 
     const newResult: PredictionResult = {
@@ -39,11 +89,7 @@ export default function StockPredictionPage() {
       isShortage: shortage
     };
 
-    // Add the new result to the existing list (newest on top)
     setPredictions([newResult, ...predictions]);
-    
-    // Optional: Clear input fields after calculating
-    setTotalSold('');
   };
 
   const removePrediction = (id: string) => {
@@ -58,18 +104,18 @@ export default function StockPredictionPage() {
       </header>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
-        {/* Input Form */}
+        {/* Manual Prediction Form */}
         <div className="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm">
-          <h2 className="text-xl font-bold mb-1">Manual Prediction</h2>
+          <h2 className="text-xl font-bold mb-1 text-gray-900">Manual Prediction</h2>
           <p className="text-sm text-gray-500 mb-6">Calculate stock needs for a specific product</p>
 
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-semibold mb-1.5">Select Product</label>
+              <label className="block text-sm font-semibold mb-1.5 text-gray-700">Select Product</label>
               <select 
                 value={selectedProductId}
                 onChange={(e) => setSelectedProductId(e.target.value)}
-                className="w-full p-3 bg-orange-50 rounded-lg border border-orange-100 outline-none"
+                className="w-full p-3 bg-orange-50 rounded-lg border border-orange-100 outline-none focus:ring-2 focus:ring-orange-200"
               >
                 <option value="">Choose a product</option>
                 {products.map(p => (
@@ -77,110 +123,114 @@ export default function StockPredictionPage() {
                 ))}
               </select>
             </div>
-            <div>
-              <label className="block text-sm font-semibold mb-1.5">Total Sold</label>
-              <input 
-                type="number"
-                value={totalSold}
-                onChange={(e) => setTotalSold(e.target.value)}
-                placeholder="Enter total quantity sold"
-                className="w-full p-3 bg-orange-50 rounded-lg border border-orange-100"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-semibold mb-1.5">Number of Days</label>
-              <input 
-                type="number"
-                value={numDays}
-                onChange={(e) => setNumDays(e.target.value)}
-                className="w-full p-3 bg-orange-50 rounded-lg border border-orange-100"
-              />
+            <div className="grid grid-cols-2 gap-4">
+                <div>
+                    <label className="block text-sm font-semibold mb-1.5 text-gray-700">Total Sold</label>
+                    <input 
+                        type="number"
+                        value={totalSold}
+                        onChange={(e) => setTotalSold(e.target.value)}
+                        placeholder="Qty"
+                        className="w-full p-3 bg-orange-50 rounded-lg border border-orange-100 outline-none"
+                    />
+                </div>
+                <div>
+                    <label className="block text-sm font-semibold mb-1.5 text-gray-700">Days</label>
+                    <input 
+                        type="number"
+                        value={numDays}
+                        onChange={(e) => setNumDays(e.target.value)}
+                        className="w-full p-3 bg-orange-50 rounded-lg border border-orange-100 outline-none"
+                    />
+                </div>
             </div>
             <button 
               onClick={handleCalculate}
-              className="w-full py-3 bg-orange-500 text-white rounded-xl font-bold hover:bg-orange-600 transition"
+              className="w-full py-3 bg-orange-500 text-white rounded-xl font-bold hover:bg-orange-600 transition shadow-md"
             >
               Calculate Prediction
             </button>
           </div>
         </div>
 
-        {/* Info Box */}
-        <div className="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm">
-          <h2 className="text-xl font-bold mb-1">Auto Prediction</h2>
+        {/* Auto Prediction Info Box */}
+        <div className="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm flex flex-col">
+          <h2 className="text-xl font-bold mb-1 text-gray-900">Auto Prediction</h2>
           <p className="text-sm text-gray-500 mb-6">Calculate for all products based on history</p>
-          <div className="bg-green-50 p-6 rounded-xl border border-green-100 mb-6 text-sm">
-            <p className="font-bold text-gray-800 mb-2">How it works:</p>
-            <ul className="list-disc ml-5 space-y-1 text-gray-600">
-              <li>Analyzes sales history from the past 7 days</li>
-              <li>Calculates average daily sales for each product</li>
-              <li>Predicts next week's stock requirements</li>
-              <li>Alerts you if restocking is needed</li>
+          <div className="bg-green-50 p-6 rounded-xl border border-green-100 mb-6 text-sm flex-1">
+            <p className="font-bold text-green-800 mb-2">How it works:</p>
+            <ul className="list-disc ml-5 space-y-2 text-green-700">
+              <li>Reads data from your <strong>Sales Tracker</strong> automatically</li>
+              <li>Calculates average daily sales for every active product</li>
+              <li>Predicts 7-day requirements vs your current stock</li>
             </ul>
           </div>
-          <button className="w-full py-3 bg-yellow-500 text-white rounded-xl font-bold flex items-center justify-center gap-2">
-            <TrendingUp size={18} /> Calculate All Predictions
+          <button 
+            onClick={handleAutoCalculate}
+            className="w-full py-4 bg-yellow-500 hover:bg-yellow-600 text-white rounded-xl font-bold flex items-center justify-center gap-2 transition shadow-md"
+          >
+            <Sparkles size={20} /> Calculate All Predictions
           </button>
         </div>
       </div>
 
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold">Predictions</h2>
+        <h2 className="text-2xl font-bold text-gray-950">Active Forecasts</h2>
         {predictions.length > 0 && (
-          <button onClick={() => setPredictions([])} className="text-red-500 text-sm font-bold flex items-center gap-1">
+          <button onClick={() => setPredictions([])} className="text-red-500 text-sm font-bold flex items-center gap-1 hover:underline">
             <Trash2 size={16} /> Clear All
           </button>
         )}
       </div>
 
-      {/*Mapping over the array to show multiple cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {/* Grid for Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
         {predictions.length > 0 ? (
           predictions.map((res) => (
-            <div key={res.id} className={`p-6 rounded-2xl border transition-all ${res.isShortage ? 'border-red-400 bg-white' : 'border-green-200 bg-white'}`}>
+            <div key={res.id} className={`p-6 rounded-2xl border-2 transition-all animate-in fade-in slide-in-from-bottom-2 duration-300 ${res.isShortage ? 'border-red-100 bg-white' : 'border-green-100 bg-white'}`}>
               <div className="flex justify-between items-start mb-4">
                 <div>
                   <h3 className="text-xl font-bold text-gray-900">{res.productName}</h3>
-                  <p className="text-xs text-gray-500">Stock forecast analysis</p>
+                  <p className="text-xs text-gray-400 font-medium">Weekly Forecast</p>
                 </div>
-                <button onClick={() => removePrediction(res.id)} className="text-gray-300 hover:text-red-500">
+                <button onClick={() => removePrediction(res.id)} className="text-gray-300 hover:text-red-500 transition">
                   <Trash2 size={18} />
                 </button>
               </div>
 
               <div className="grid grid-cols-2 gap-4 mb-4">
-                <div>
-                  <p className="text-xs text-gray-500 uppercase font-bold tracking-wider">Avg Daily Sales</p>
-                  <p className="text-lg font-bold">{res.avgDailySales.toFixed(2)} units</p>
+                <div className="bg-gray-50 p-3 rounded-lg">
+                  <p className="text-[10px] text-gray-400 uppercase font-black">Daily Avg</p>
+                  <p className="text-lg font-bold text-gray-800">{res.avgDailySales.toFixed(1)}</p>
                 </div>
-                <div>
-                  <p className="text-xs text-gray-500 uppercase font-bold tracking-wider">Current Stock</p>
-                  <p className="text-lg font-bold">{res.currentStock} units</p>
+                <div className="bg-gray-50 p-3 rounded-lg">
+                  <p className="text-[10px] text-gray-400 uppercase font-black">Current Stock</p>
+                  <p className="text-lg font-bold text-gray-800">{res.currentStock}</p>
                 </div>
               </div>
 
-              <div className="bg-orange-50 p-4 rounded-xl mb-4 border border-orange-100">
-                <p className="text-xs text-orange-700 font-bold uppercase mb-1">Next Week Prediction</p>
-                <p className="text-2xl font-black text-orange-600">{res.nextWeekNeeded} units needed</p>
+              <div className={`p-4 rounded-xl mb-4 border ${res.isShortage ? 'bg-orange-50 border-orange-100' : 'bg-green-50 border-green-100'}`}>
+                <p className={`text-[10px] font-black uppercase mb-1 ${res.isShortage ? 'text-orange-700' : 'text-green-700'}`}>Next 7 Days Needed</p>
+                <p className={`text-3xl font-black ${res.isShortage ? 'text-orange-600' : 'text-green-600'}`}>{res.nextWeekNeeded} <span className="text-sm font-normal">units</span></p>
               </div>
 
               {res.isShortage ? (
-                <div className="bg-red-50 p-3 rounded-xl border border-red-100 flex gap-2 items-center text-red-700 text-xs">
-                  <AlertTriangle size={16} />
-                  <p><strong>Restock Required!</strong> Prepare {res.nextWeekNeeded - res.currentStock} more units.</p>
+                <div className="flex gap-2 items-center text-red-600 text-xs font-bold bg-red-50 p-2 rounded-lg">
+                  <AlertTriangle size={14} />
+                  <p>Restock {res.nextWeekNeeded - res.currentStock} units ASAP!</p>
                 </div>
               ) : (
-                <div className="bg-green-50 p-3 rounded-xl border border-green-100 flex gap-2 items-center text-green-700 text-xs">
-                  <CheckCircle size={16} />
-                  <p><strong>Stock Level Healthy!</strong> Current stock is sufficient.</p>
+                <div className="flex gap-2 items-center text-green-600 text-xs font-bold bg-green-50 p-2 rounded-lg">
+                  <CheckCircle size={14} />
+                  <p>Inventory level is healthy.</p>
                 </div>
               )}
             </div>
           ))
         ) : (
-          <div className="col-span-full text-center py-20 bg-white rounded-2xl border border-dashed border-gray-200">
-            <TrendingUp size={48} className="mx-auto text-gray-300 mb-4" />
-            <p className="text-gray-400">No predictions yet. Use manual calculation above.</p>
+          <div className="col-span-full text-center py-20 bg-white rounded-3xl border-2 border-dashed border-gray-100">
+            <TrendingUp size={48} className="mx-auto text-gray-200 mb-4" />
+            <p className="text-gray-400 font-medium">No active forecasts. Calculate above to start.</p>
           </div>
         )}
       </div>
