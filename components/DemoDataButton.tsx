@@ -18,7 +18,7 @@ const MOCK_PREDICTIONS: PredictionResult[] = [
     avgDailySales: 10.7,
     currentStock: 45,
     nextWeekNeeded: 75,
-    isShortage: false
+    isShortage: true
   },
   {
     id: 'pred-2',
@@ -31,10 +31,10 @@ const MOCK_PREDICTIONS: PredictionResult[] = [
   {
     id: 'pred-3',
     productName: 'Cabbage Heads',
-    avgDailySales: 4.3,
+    avgDailySales: 6.5,
     currentStock: 20,
-    nextWeekNeeded: 30,
-    isShortage: false
+    nextWeekNeeded: 46,
+    isShortage: true
   },
   {
     id: 'pred-4',
@@ -146,7 +146,7 @@ export function DemoDataButton() {
 	const products = localStorage.getItem(PRODUCTS_KEY);
 	const predictions = localStorage.getItem(PREDICTIONS_KEY)
 
-	if (waste !== null || sales !== null || suppliers !== null || products !== null) {
+	if (waste !== null || sales !== null || suppliers !== null || products !== null || predictions !== null) {
     setLoaded(true);
 	}
   }, [])
