@@ -20,7 +20,7 @@ import BarChartRoundedIcon from '@mui/icons-material/BarChartRounded';
 import WarningAmberRoundedIcon from '@mui/icons-material/WarningAmberRounded';
 import StorefrontRoundedIcon from '@mui/icons-material/StorefrontRounded';
 import Divider from '@mui/material/Divider';
-import { ReactElement } from 'react';
+import type { ReactElement } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
@@ -75,7 +75,7 @@ export default function Sidebar(props: Props) {
           <Box sx={{ fontFamily: '"Nunito", sans-serif', fontWeight: 800, fontSize: '1rem', color: '#1e293b', lineHeight: 1.1 }}>
             FreshStock
           </Box>
-          <Box sx={{ fontFamily: '"Nunito", sans-serif', fontSize: '0.7rem', color: '#94a3b8', fontWeight: 500 }}>
+          <Box sx={{ fontFamily: '"Nunito", sans-serif', fontSize: '0.7rem', color: '#627693', fontWeight: 500 }}>
             Smart Inventory
           </Box>
         </Box>
@@ -104,6 +104,9 @@ export default function Sidebar(props: Props) {
                     backgroundColor: active ? '#ea6c0a' : 'rgba(249,115,22,0.08)',
                   },
                   transition: 'background-color 0.18s ease',
+                  "&:focus": {
+                    outline: 'solid',
+                  }
                 }}
               >
                 <ListItemIcon sx={{ minWidth: 32, color: active ? '#fff' : (colored || '#64748b') }}>
@@ -117,7 +120,7 @@ export default function Sidebar(props: Props) {
                         fontFamily: '"Nunito", sans-serif',
                         fontWeight: active ? 700 : 500,
                         fontSize: '0.875rem',
-                        color: active ? '#fff' : (colored || '#374151'),
+                        color: active ? '#fff' : (colored || '#333333'),
                       }
                     }
                   }}

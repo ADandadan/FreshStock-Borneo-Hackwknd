@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { WasteLog, SaleEntry, Product, PredictionResult } from "@/constants";
+import type { WasteLog, SaleEntry, Product, PredictionResult } from "@/constants";
 
 const WASTE_LOGS_KEY = 'freshstock_waste'
 const SALES_KEY = 'freshstock_sales'
@@ -171,12 +171,12 @@ export function DemoDataButton() {
   return (
     <div className="fixed bottom-4 right-4 flex gap-2 z-50">
       {!loaded ? (
-        <button onClick={loadDemoData}
+        <button type='button' onClick={loadDemoData}
           className="bg-indigo-600 text-white px-4 py-2 rounded-full shadow-lg text-sm hover:bg-indigo-700">
           Load Demo Data
         </button>
       ) : (
-        <button onClick={clearData}
+        <button type='button' onClick={clearData}
           className="bg-red-500 text-white px-4 py-2 rounded-full shadow-lg text-sm hover:bg-red-600">
           Clear Data
         </button>

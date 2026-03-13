@@ -1,12 +1,12 @@
 "use client";
 
 import { useState, useEffect, useRef } from 'react';
-import { TrendingUp, AlertTriangle, CheckCircle, Trash2, Sparkles, Clock } from 'lucide-react';
-import { Product, PredictionResult, SaleEntry } from '@/constants';
+import { Trash2, Sparkles, Clock } from 'lucide-react';
+import type { Product, PredictionResult, SaleEntry } from '@/constants';
 
 export default function StockPredictionPage() {
   const [products, setProducts] = useState<Product[]>([]);
-  const [sales, setSales] = useState<SaleEntry[]>([]);
+  //const [sales, setSales] = useState<SaleEntry[]>([]);
   const [predictions, setPredictions] = useState<PredictionResult[]>([]);
   
   // This Ref acts as a "Lock". We only save to storage if this is TRUE.
@@ -15,11 +15,11 @@ export default function StockPredictionPage() {
   // --- 1. SINGLE EFFECT FOR LOADING ---
   useEffect(() => {
     const savedProducts = localStorage.getItem('freshstock_products');
-    const savedSales = localStorage.getItem('freshstock_sales');
+    //const savedSales = localStorage.getItem('freshstock_sales');
     const savedPredictions = localStorage.getItem('freshstock_predictions');
 
     if (savedProducts) setProducts(JSON.parse(savedProducts));
-    if (savedSales) setSales(JSON.parse(savedSales));
+    //if (savedSales) setSales(JSON.parse(savedSales));
     
     if (savedPredictions) {
       const parsed = JSON.parse(savedPredictions);
@@ -133,36 +133,36 @@ export default function StockPredictionPage() {
             <select 
               value={selectedProductId}
               onChange={(e) => setSelectedProductId(e.target.value)}
-              className="w-full p-3.5 bg-gray-50 rounded-xl outline-none"
+              className="w-full p-3.5 bg-gray-50 rounded-xl outline-none focus:outline-solid" aria-label='Select product combo box'
             >
               <option value="">Select Product</option>
               {products.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
             </select>
             <div className="grid grid-cols-2 gap-4">
-              <input type="number" placeholder="Sold" value={totalSold} onChange={(e) => setTotalSold(e.target.value)} className="p-3.5 bg-gray-50 rounded-xl outline-none" />
-              <input type="number" placeholder="Days" value={numDays} onChange={(e) => setNumDays(e.target.value)} className="p-3.5 bg-gray-50 rounded-xl outline-none" />
+              <input type="number" placeholder="Sold" value={totalSold} onChange={(e) => setTotalSold(e.target.value)} className="p-3.5 bg-gray-50 rounded-xl outline-none focus:outline-solid" />
+              <input type="number" placeholder="Days" value={numDays} onChange={(e) => setNumDays(e.target.value)} className="p-3.5 bg-gray-50 rounded-xl outline-none focus:outline-solid" />
             </div>
-            <button onClick={handleManualCalculate} className="w-full py-4 bg-orange-500 text-white rounded-xl font-bold transition hover:bg-orange-600">
+            <button type='button'onClick={handleManualCalculate} className="w-full py-4 bg-orange-500 text-white rounded-xl font-bold transition hover:bg-orange-600">
               Calculate
             </button>
           </div>
         </div>
 
         <div className="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-center">
-          <button 
+          <button type='button'
             onClick={handleAutoCalculate}
             className="w-full py-6 bg-yellow-500 hover:bg-yellow-600 text-white rounded-2xl font-black text-xl flex items-center justify-center gap-3 transition shadow-lg"
           >
             <Sparkles size={28} /> RUN AUTO-PREDICTION
           </button>
-          <p className="text-center text-xs text-gray-400 mt-4 uppercase font-bold tracking-widest">Uses Sales Tracker History</p>
+          <p className="text-center text-xs text-gray-500 mt-4 uppercase font-bold tracking-widest">Uses Sales Tracker History</p>
         </div>
       </div>
 
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-black text-gray-900 uppercase">Forecast History</h2>
         {predictions.length > 0 && (
-          <button onClick={clearAll} className="text-red-500 font-bold text-sm">Clear All</button>
+          <button type='button'onClick={clearAll} className="text-red-500 font-bold text-sm">Clear All</button>
         )}
       </div>
 
@@ -173,15 +173,15 @@ export default function StockPredictionPage() {
             <div key={res.id} className={`p-6 bg-white rounded-2xl border-2 ${res.isShortage ? 'border-red-100' : 'border-green-100'}`}>
               <div className="flex justify-between items-start mb-4">
                 <h3 className="font-bold text-gray-900 uppercase">{res.productName}</h3>
-                <button onClick={() => removePrediction(res.id)} className="text-gray-300 hover:text-red-500"><Trash2 size={18}/></button>
+                <button type='button'onClick={() => removePrediction(res.id)} className="text-gray-300 hover:text-red-500" aria-label='Delete prediction'><Trash2 size={18}/></button>
               </div>
               <div className="grid grid-cols-2 gap-2 mb-4">
                 <div className="bg-gray-50 p-2 rounded-lg text-center">
-                  <p className="text-[10px] text-gray-400 font-bold">STOCK</p>
+                  <p className="text-[10px] text-gray-500 font-bold">STOCK</p>
                   <p className="font-bold">{res.currentStock}</p>
                 </div>
                 <div className="bg-gray-50 p-2 rounded-lg text-center">
-                  <p className="text-[10px] text-gray-400 font-bold">AVG SOLD</p>
+                  <p className="text-[10px] text-gray-500 font-bold">AVG SOLD</p>
                   <p className="font-bold">{res.avgDailySales.toFixed(1)}</p>
                 </div>
               </div>

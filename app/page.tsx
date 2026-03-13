@@ -10,8 +10,7 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import { useEffect, useState } from "react";
-
-const drawerWidth = 220;
+import type { Product } from "@/constants";
 
 const quickActions = [
   {
@@ -40,7 +39,7 @@ const quickActions = [
 function getScoreProgressColor(score: number) {
   if (score >= 70) return {
     bar: "linear-gradient(90deg, #4ade80, #22c55e)",
-    text: "#22c55e",
+    text: "#00aa00",
     shadow: "rgba(34,197,94,0.4)",
     track: "#dcfce7",
   };
@@ -52,7 +51,7 @@ function getScoreProgressColor(score: number) {
   };
   return {
     bar: "linear-gradient(90deg, #f87171, #ef4444)",
-    text: "#ef4444",
+    text: "#dc2a2a",
     shadow: "rgba(239,68,68,0.4)",
     track: "#fee2e2",
   };
@@ -91,7 +90,7 @@ export default function DashboardPage() {
       if (savedProducts) {
         try {
           const data = JSON.parse(savedProducts);
-          const totals = data.reduce((sum: any, obj: any) => ({
+          const totals = data.reduce((sum: { totalRevenue: number; currentStock: number }, obj: Product) => ({
             totalRevenue: sum.totalRevenue + obj.sellingPrice,
             currentStock: sum.currentStock + obj.inStock
           }), { totalRevenue: 0, currentStock: 0 })
@@ -107,13 +106,13 @@ export default function DashboardPage() {
       if (savedWaste) setWasteLogs(JSON.parse(savedWaste));
       if (savedMisc) {
         const data = JSON.parse(savedMisc);
-        if (data.hasOwnProperty("totalRevenue")) {
+        if (Object.hasOwn(data, "totalRevenue")) {
           setTotalRevenue(data["totalRevenue"]);
         }
-        if (data.hasOwnProperty("wasteRate")) {
+        if (Object.hasOwn(data, "wasteRate")) {
           setWasteRate(data["wasteRate"]);
         }
-        if (data.hasOwnProperty("foodSecurityScore")) {
+        if (Object.hasOwn(data, "foodSecurityScore")) {
           setFoodSecurityScore(data["foodSecurityScore"]);
         }
 
@@ -224,7 +223,7 @@ export default function DashboardPage() {
                 sx={{
                   fontFamily: '"Nunito", sans-serif',
                   fontSize: "0.78rem",
-                  color: "#9e8674",
+                  color: "#87735E",
                   fontWeight: 600,
                   mb: 1,
                   textTransform: "uppercase",
@@ -313,7 +312,7 @@ export default function DashboardPage() {
                 sx={{
                   fontFamily: '"Nunito", sans-serif',
                   fontSize: "0.8rem",
-                  color: "#9e8674",
+                  color: "#87735E",
                   fontWeight: 500,
                 }}
               >
@@ -337,9 +336,9 @@ export default function DashboardPage() {
               sx={{
                 fontFamily: '"Nunito", sans-serif',
                 fontSize: "0.75rem",
-                color: "#9e8674",
                 fontWeight: 600,
               }}
+              className="text-gray-500"
             >
               out of 100
             </Typography>
@@ -430,17 +429,17 @@ export default function DashboardPage() {
           <Typography sx={{ fontFamily: '"Nunito", sans-serif', fontWeight: 800, fontSize: "1rem", color: "#1c1007", mb: 0.3 }}>
             Recent Sales
           </Typography>
-          <Typography sx={{ fontFamily: '"Nunito", sans-serif', fontSize: "0.8rem", color: "#f97316", fontWeight: 600, mb: 2 }}>
+          <Typography sx={{ fontFamily: '"Nunito", sans-serif', fontSize: "0.8rem", fontWeight: 600, mb: 2 }} className="text-red-600">
             Latest transactions
           </Typography>
           {sales.map((item, i, arr) => (
-            <Box key={i}>
+            <Box key={item.id}>
               <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", py: 1.5 }}>
                 <Box>
                   <Typography sx={{ fontFamily: '"Nunito", sans-serif', fontWeight: 700, fontSize: "0.9rem", color: "#1c1007" }}>
                     {item.productName}
                   </Typography>
-                  <Typography sx={{ fontFamily: '"Nunito", sans-serif', fontSize: "0.78rem", color: "#f59e0b", fontWeight: 600 }}>
+                  <Typography sx={{ fontFamily: '"Nunito", sans-serif', fontSize: "0.78rem", fontWeight: 600 }} className="text-red-600">
                     {item.date}
                   </Typography>
                 </Box>
@@ -448,7 +447,7 @@ export default function DashboardPage() {
                   <Typography sx={{ fontFamily: '"Nunito", sans-serif', fontWeight: 700, fontSize: "0.9rem", color: "#1c1007" }}>
                     RM {item.revenue.toFixed(2)}
                   </Typography>
-                  <Typography sx={{ fontFamily: '"Nunito", sans-serif', fontSize: "0.78rem", color: "#9e8674", fontWeight: 500 }}>
+                  <Typography sx={{ fontFamily: '"Nunito", sans-serif', fontSize: "0.78rem", fontWeight: 500 }} className="text-gray-500">
                     {item.quantitySold} units
                   </Typography>
                 </Box>
@@ -473,24 +472,24 @@ export default function DashboardPage() {
           <Typography sx={{ fontFamily: '"Nunito", sans-serif', fontWeight: 800, fontSize: "1rem", color: "#1c1007", mb: 0.3 }}>
             Waste Alert
           </Typography>
-          <Typography sx={{ fontFamily: '"Nunito", sans-serif', fontSize: "0.8rem", color: "#f97316", fontWeight: 600, mb: 2 }}>
+          <Typography sx={{ fontFamily: '"Nunito", sans-serif', fontSize: "0.8rem", fontWeight: 600, mb: 2 }} className="text-red-600">
             Items requiring attention
           </Typography>
-          {wasteLogs.map((item, i) => (
-            <Box key={i} sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", py: 1.5 }}>
+          {wasteLogs.map((item) => (
+            <Box key={item.id} sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", py: 1.5 }}>
               <Box>
                 <Typography sx={{ fontFamily: '"Nunito", sans-serif', fontWeight: 700, fontSize: "0.9rem", color: "#1c1007" }}>
                   {item.productName}
                 </Typography>
-                <Typography sx={{ fontFamily: '"Nunito", sans-serif', fontSize: "0.78rem", color: "#9e8674", fontWeight: 500 }}>
+                <Typography sx={{ fontFamily: '"Nunito", sans-serif', fontSize: "0.78rem", fontWeight: 500 }} className="text-gray-500">
                   {item.reason}
                 </Typography>
               </Box>
               <Box sx={{ textAlign: "right" }}>
-                <Typography sx={{ fontFamily: '"Nunito", sans-serif', fontWeight: 700, fontSize: "0.9rem", color: "#ef4444" }}>
+                <Typography sx={{ fontFamily: '"Nunito", sans-serif', fontWeight: 700, fontSize: "0.9rem" }} className="text-red-600">
                   -RM {item.costLost.toFixed(2)}
                 </Typography>
-                <Typography sx={{ fontFamily: '"Nunito", sans-serif', fontSize: "0.78rem", color: "#9e8674", fontWeight: 500 }}>
+                <Typography sx={{ fontFamily: '"Nunito", sans-serif', fontSize: "0.78rem", fontWeight: 500 }} className="text-gray-500">
                   {item.quantity} units
                 </Typography>
               </Box>
@@ -537,7 +536,7 @@ export default function DashboardPage() {
                 sx={{
                   fontFamily: '"Nunito", sans-serif',
                   fontSize: "0.83rem",
-                  color: "#9e8674",
+                  color: "#605743",
                   fontWeight: 500,
                 }}
               >
@@ -562,6 +561,9 @@ export default function DashboardPage() {
                   boxShadow: `0 6px 18px ${btnColor}66`,
                 },
                 transition: "all 0.18s ease",
+                "&:focus": {
+                  outline: "solid"
+                }
               }}
               href={href}
             >

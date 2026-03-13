@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { Package, Trash2, Plus, X } from 'lucide-react';
-import { Product, Ingredient } from '@/constants';
+import { Package, Trash2, Plus } from 'lucide-react';
+import type { Product, Ingredient } from '@/constants';
 
 export default function ProductStockPage() {
   // --- State ---
@@ -64,7 +64,7 @@ export default function ProductStockPage() {
       id: Date.now(),
       name: productName,
       sellingPrice: parseFloat(sellingPrice) || 0,
-      inStock: parseInt(currentStock) || 0,
+      inStock: parseInt(currentStock, 10) || 0,
       ingredients: [...ingredients]
     };
 
@@ -99,6 +99,7 @@ export default function ProductStockPage() {
         </div>
         {!showAddForm && (
           <button 
+            type='button'
             onClick={() => setShowAddForm(true)}
             className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-3.5 rounded-xl font-bold flex items-center gap-2 transition shadow-md"
           >
@@ -115,8 +116,9 @@ export default function ProductStockPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1.5">Product Name</label>
+              <label htmlFor='product-name' className="block text-sm font-semibold text-gray-700 mb-1.5">Product Name</label>
               <input 
+                id='product-name'
                 value={productName} 
                 onChange={(e) => setProductName(e.target.value)} 
                 className="w-full px-4 py-2.5 bg-orange-50 rounded-lg border border-orange-100 focus:outline-none focus:ring-2 focus:ring-orange-200" 
@@ -124,8 +126,9 @@ export default function ProductStockPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1.5">Selling Price (RM)</label>
-              <input 
+              <label htmlFor='selling-price' className="block text-sm font-semibold text-gray-700 mb-1.5">Selling Price (RM)</label>
+              <input
+                id='selling-price'
                 value={sellingPrice} 
                 onChange={(e) => setSellingPrice(e.target.value)} 
                 className="w-full px-4 py-2.5 bg-orange-50 rounded-lg border border-orange-100 focus:outline-none focus:ring-2 focus:ring-orange-200" 
@@ -133,8 +136,9 @@ export default function ProductStockPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1.5">Current Stock</label>
-              <input 
+              <label htmlFor='current-stock' className="block text-sm font-semibold text-gray-700 mb-1.5">Current Stock</label>
+              <input
+                id='current-stock'
                 value={currentStock} 
                 onChange={(e) => setCurrentStock(e.target.value)} 
                 className="w-full px-4 py-2.5 bg-orange-50 rounded-lg border border-orange-100 focus:outline-none focus:ring-2 focus:ring-orange-200" 
@@ -147,6 +151,7 @@ export default function ProductStockPage() {
             <div className="flex justify-between items-center mb-6">
               <h3 className="font-bold text-gray-800 text-lg">Ingredients</h3>
               <button 
+                type='button'
                 onClick={addIngredientRow} 
                 className="text-orange-600 text-sm font-bold flex items-center gap-1.5 bg-orange-50 px-4 py-2 rounded-lg hover:bg-orange-100 transition"
               >
@@ -184,8 +189,10 @@ export default function ProductStockPage() {
                     className="w-full px-4 py-2 rounded-lg border border-gray-100 font-medium text-gray-900" 
                   />
                   <button 
+                    type='button'
                     onClick={() => removeIngredientRow(ing.id)} 
                     className="text-gray-400 hover:text-red-500 p-1 transition"
+                    aria-label='Remove ingredient'
                   >
                     <Trash2 size={22} />
                   </button>
@@ -209,12 +216,14 @@ export default function ProductStockPage() {
 
           <div className="flex gap-4">
             <button 
+              type='button'
               onClick={handleSaveProduct} 
               className="flex-1 bg-orange-500 hover:bg-orange-600 text-white py-4 rounded-xl font-bold text-lg shadow-lg transition"
             >
               Add Product
             </button>
             <button 
+              type='button'
               onClick={resetForm} 
               className="px-10 py-4 bg-white border border-gray-200 rounded-xl font-bold text-gray-500 hover:bg-gray-50 transition"
             >
@@ -233,8 +242,10 @@ export default function ProductStockPage() {
             products.map((p) => (
               <div key={p.id} className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm relative group hover:shadow-md transition-shadow">
                 <button 
+                  type='button'
                   onClick={() => deleteFullProduct(p.id)}
                   className="absolute top-4 right-4 text-gray-300 hover:text-red-500 transition"
+                  aria-label="Delete product"
                 >
                   <Trash2 size={18} />
                 </button>
@@ -247,9 +258,9 @@ export default function ProductStockPage() {
                 <p className="text-gray-500 font-medium mb-6">{p.inStock} units in stock</p>
                 
                 <div className="space-y-2.5 text-sm mb-8 border-t border-gray-50 pt-5">
-                  <p className="font-bold text-gray-400 uppercase tracking-wider text-[10px] mb-3">Ingredients</p>
-                  {p.ingredients?.map((ing, idx) => (
-                    <div key={idx} className="flex justify-between items-center">
+                  <p className="font-bold text-gray-500 uppercase tracking-wider text-[10px] mb-3">Ingredients</p>
+                  {p.ingredients?.map((ing) => (
+                    <div key={ing.name} className="flex justify-between items-center">
                       <span className="text-gray-600 font-medium">{ing.name} <span className="text-gray-400 text-xs ml-1">({ing.quantity}{ing.unit})</span></span>
                       <span className="font-bold text-gray-800">RM {Number(ing.price).toFixed(2)}</span>
                     </div>
@@ -258,16 +269,16 @@ export default function ProductStockPage() {
                 
                 <div className="flex justify-between items-end border-t border-gray-50 pt-5 mt-auto">
                   <div>
-                    <p className="text-[10px] font-bold text-gray-400 uppercase mb-1">Total Cost</p>
+                    <p className="text-[10px] font-bold text-gray-500 uppercase mb-1">Total Cost</p>
                     <p className="text-lg font-bold text-gray-900">RM {calculateTotalCost(p.ingredients ?? []).toFixed(2)}</p>
                   </div>
                   <div>
-                    <p className="text-[10px] font-bold text-gray-400 uppercase mb-1">Selling</p>
+                    <p className="text-[10px] font-bold text-gray-500 uppercase mb-1">Selling</p>
                     <p className="text-lg font-bold text-gray-900">RM {p.sellingPrice.toFixed(2)}</p>
                   </div>
                   <div className="text-right">
-                    <p className="text-[10px] font-bold text-gray-400 uppercase mb-1">Profit</p>
-                    <p className="text-lg font-bold text-green-600">RM {(p.sellingPrice - calculateTotalCost(p.ingredients ?? [])).toFixed(2)}</p>
+                    <p className="text-[10px] font-bold text-gray-500 uppercase mb-1">Profit</p>
+                    <p className="text-lg font-bold text-[#008a00]">RM {(p.sellingPrice - calculateTotalCost(p.ingredients ?? [])).toFixed(2)}</p>
                   </div>
                 </div>
               </div>

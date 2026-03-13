@@ -12,7 +12,3 @@ export async function generateText(prompt: string) {
   });
   return response.text;
 }
-
-export async function generateWithHistory(messages: { role: string; content: string }[]) {
-  // another example function
-}

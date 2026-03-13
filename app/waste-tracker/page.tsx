@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Trash2, DollarSign, Sparkles, Sprout } from 'lucide-react';
-import { WasteLog, Product } from '@/constants';
+import type { WasteLog, Product } from '@/constants';
 
 const WASTE_LOGS_KEY = 'freshstock_waste';
 
@@ -34,7 +34,7 @@ export default function WasteTrackerPage() {
     } else {
       setTotalBatchStock('');
     }
-  }, [selectedProductId]);
+  }, [selectedProduct]);
   
   // Load from localStorage on mount, fall back to DEFAULT_LOGS
   const [wasteLogs, setWasteLogs] = useState<WasteLog[]>(() => {
@@ -106,17 +106,17 @@ export default function WasteTrackerPage() {
         <div className="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm">
           <h2 className="text-xl font-bold mb-6">Log Food Waste</h2>
           <div className="space-y-4">
-            <select value={selectedProductId} onChange={(e) => setSelectedProductId(e.target.value)} className="w-full p-3 bg-red-50 rounded-lg border border-red-100 outline-none">
+            <select value={selectedProductId} onChange={(e) => setSelectedProductId(e.target.value)} className="w-full p-3 bg-red-50 rounded-lg border border-red-100 outline-none focus:outline-solid" aria-label='Select product combo box'>
               <option value="">Select Product...</option>
               {products.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
             </select>
             
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-semibold mb-1.5">
+                <label className="block text-sm font-semibold mb-1.5" htmlFor='waste-qty'>
                   Waste Qty
                   {selectedProduct && (
-                    <span className="text-xs text-gray-400 font-normal ml-1">(max {selectedProduct.inStock})</span>
+                    <span className="text-xs text-gray-500 font-normal ml-1">(max {selectedProduct.inStock})</span>
                   )}
                 </label>
                 <input
@@ -126,35 +126,38 @@ export default function WasteTrackerPage() {
                   max={selectedProduct?.inStock ?? ''}
                   onChange={(e) => setQuantity(e.target.value)}
                   placeholder="Units wasted"
-                  className="w-full p-3 bg-red-50 rounded-lg border border-red-100 outline-none"
+                  className="w-full p-3 bg-red-50 rounded-lg border border-red-100 outline-none focus:outline-solid"
+                  id='waste-qty'
                 />
               </div>
               <div>
-                <label className="block text-sm font-semibold mb-1.5">Total Batch Stock</label>
+                <label className="block text-sm font-semibold mb-1.5" htmlFor='total-batch-stock'>Total Batch Stock</label>
                 <input
                   type="number"
                   value={totalBatchStock}
                   readOnly
                   placeholder="Select a product"
-                  className="w-full p-3 bg-gray-100 rounded-lg border border-gray-200 outline-none opacity-60 cursor-not-allowed"
+                  className="w-full p-3 bg-gray-100 rounded-lg border border-gray-200 outline-none opacity-60 cursor-not-allowed focus:outline-solid"
+                  id='total-batch-stock'
                 />
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-semibold mb-1.5">Cost Price (RM)</label>
+                <label htmlFor='cost-price' className="block text-sm font-semibold mb-1.5" >Cost Price (RM)</label>
                 <input
+                  id='cost-price'
                   type="number"
                   value={calculatedCost}
                   readOnly
                   placeholder="Auto-calculated"
-                  className="w-full p-3 bg-gray-100 rounded-lg border border-gray-200 outline-none opacity-60 cursor-not-allowed"
+                  className="w-full p-3 bg-gray-100 rounded-lg border border-gray-200 outline-none opacity-60 cursor-not-allowed focus:outline-solid"
                 />
               </div>
               <div>
-                <label className="block text-sm font-semibold mb-1.5">Reason</label>
-                <select value={reason} onChange={(e) => setReason(e.target.value)} className="w-full p-3 bg-red-50 rounded-lg border border-red-100 outline-none">
+                <label className="block text-sm font-semibold mb-1.5" htmlFor='reason'>Reason</label>
+                <select value={reason} onChange={(e) => setReason(e.target.value)} className="w-full p-3 bg-red-50 rounded-lg border border-red-100 outline-none focus:outline-solid" id='reason'>
                   <option value="">Select...</option>
                   <option value="Returned">Returned</option>
                   <option value="Unsold">Unsold</option>
@@ -164,7 +167,7 @@ export default function WasteTrackerPage() {
               </div>
             </div>
 
-            <button onClick={handleLogWaste} className="w-full py-3 bg-red-500 text-white rounded-xl font-bold hover:bg-red-600 transition mt-2">
+            <button type='button' onClick={handleLogWaste} className="w-full py-3 bg-red-500 text-white rounded-xl font-bold hover:bg-red-600 transition mt-2">
               Calculate Impact & Log
             </button>
           </div>
@@ -192,19 +195,19 @@ export default function WasteTrackerPage() {
             <div className="flex justify-between items-start mb-4">
               <div>
                 <h3 className="text-xl font-bold text-gray-900">{log.productName}</h3>
-                <span className="text-xs font-bold text-red-500 uppercase">{log.reason}</span>
+                <span className="text-xs font-bold text-red-600 uppercase">{log.reason}</span>
               </div>
-              <button onClick={() => removeLog(log.id)} className="text-gray-300 hover:text-red-500"><Trash2 size={18} /></button>
+              <button type='button' onClick={() => removeLog(log.id)} className="text-gray-300 hover:text-red-500" aria-label='Delete waste log'><Trash2 size={18} /></button>
             </div>
 
             <div className="grid grid-cols-2 gap-4 mb-4">
               <div className="bg-gray-50 p-3 rounded-lg border border-gray-100">
                 <p className="text-xs text-gray-500 uppercase font-bold">Profit Loss</p>
-                <p className="text-lg font-bold text-red-600">RM {log.costLost.toFixed(2)}</p>
+                <p className="text-lg font-bold text-red-6  00">RM {log.costLost.toFixed(2)}</p>
               </div>
               <div className="bg-gray-50 p-3 rounded-lg border border-gray-100">
                 <p className="text-xs text-gray-500 uppercase font-bold">Waste Rate</p>
-                <p className="text-lg font-bold text-orange-600">{log.wasteRate.toFixed(1)}%</p>
+                <p className="text-lg font-bold text-red-600">{log.wasteRate.toFixed(1)}%</p>
               </div>
             </div>
 

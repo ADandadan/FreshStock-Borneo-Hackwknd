@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { TrendingUp, TrendingDown, PlusCircle, Trash2, HelpCircle, FileText, UploadCloud, Globe, CloudRain, Truck } from 'lucide-react';
-import { Supplier } from '@/constants';
+import type { Supplier } from '@/constants';
 
 export default function SupplierPricesPage() {
   const [name, setName] = useState('');
@@ -98,27 +98,27 @@ export default function SupplierPricesPage() {
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-semibold mb-1.5">Supplier Name</label>
-                <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Borneo Agri-Coop" className="w-full p-3 bg-blue-50 rounded-lg border border-blue-100 outline-none" />
+                <label htmlFor='supplier-name' className="block text-sm font-semibold mb-1.5">Supplier Name</label>
+                <input id='supplier-name' type="text" value={name} aria-labelledby='supplier-name' onChange={(e) => setName(e.target.value)} placeholder="e.g. Borneo Agri-Coop" className="w-full p-3 bg-blue-50 rounded-lg border border-blue-100 outline-none focus:outline-solid" />
               </div>
               <div>
-                <label className="block text-sm font-semibold mb-1.5">Ingredient</label>
-                <input type="text" value={ingredient} onChange={(e) => setIngredient(e.target.value)} placeholder="e.g. White Rice (10kg)" className="w-full p-3 bg-blue-50 rounded-lg border border-blue-100 outline-none" />
+                <label htmlFor='ingredient' className="block text-sm font-semibold mb-1.5">Ingredient</label>
+                <input id='ingredient' type="text" value={ingredient} onChange={(e) => setIngredient(e.target.value)} placeholder="e.g. White Rice (10kg)" className="w-full p-3 bg-blue-50 rounded-lg border border-blue-100 outline-none focus:outline-solid" />
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-semibold mb-1.5">Previous Price (RM)</label>
-                <input type="number" value={prevPrice} onChange={(e) => setPrevPrice(e.target.value)} placeholder="0.00" className="w-full p-3 bg-blue-50 rounded-lg border border-blue-100 outline-none" />
+                <label htmlFor='previous-price' className="block text-sm font-semibold mb-1.5">Previous Price (RM)</label>
+                <input id='previous-price' type="number" value={prevPrice} onChange={(e) => setPrevPrice(e.target.value)} placeholder="0.00" className="w-full p-3 bg-blue-50 rounded-lg border border-blue-100 outline-none focus:outline-solid" />
               </div>
               <div>
-                <label className="block text-sm font-semibold mb-1.5">Current Price (RM)</label>
-                <input type="number" value={currentPrice} onChange={(e) => setCurrentPrice(e.target.value)} placeholder="0.00" className="w-full p-3 bg-blue-50 rounded-lg border border-blue-100 outline-none" />
+                <label htmlFor='current-price' className="block text-sm font-semibold mb-1.5">Current Price (RM)</label>
+                <input id='current-price' type="number" value={currentPrice} onChange={(e) => setCurrentPrice(e.target.value)} placeholder="0.00" className="w-full p-3 bg-blue-50 rounded-lg border border-blue-100 outline-none focus:outline-solid" />
               </div>
             </div>
 
-            <button onClick={handleAddSupplier} className="w-full py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition mt-2 flex justify-center items-center gap-2">
+            <button type='button' onClick={handleAddSupplier} className="w-full py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition mt-2 flex justify-center items-center gap-2">
               <PlusCircle size={18} /> Analyze Price Change
             </button>
           </div>
@@ -147,15 +147,15 @@ export default function SupplierPricesPage() {
                 <h3 className="text-lg font-bold text-gray-900">{supplier.name}</h3>
                 <span className="text-xs font-bold text-gray-500">{supplier.ingredient}</span>
               </div>
-              <button onClick={() => removeSupplier(supplier.id)} className="text-gray-300 hover:text-red-500"><Trash2 size={16} /></button>
+              <button type='button' onClick={() => removeSupplier(supplier.id)} className="text-gray-300 hover:text-red-500" aria-label='Delete analysis'><Trash2 size={16} /></button>
             </div>
 
             <div className="flex items-center gap-4 mb-4">
               <div>
-                <p className="text-xs text-gray-400 font-bold uppercase">Old</p>
-                <p className="text-lg font-semibold text-gray-400 line-through">RM{supplier.prevPrice.toFixed(2)}</p>
+                <p className="text-xs text-gray-500 font-bold uppercase">Old</p>
+                <p className="text-lg font-semibold text-gray-500 line-through">RM{supplier.prevPrice.toFixed(2)}</p>
               </div>
-              <div className="text-gray-300">➔</div>
+              <div className="text-gray-500">➔</div>
               <div>
                 <p className="text-xs text-gray-800 font-bold uppercase">New</p>
                 <p className="text-2xl font-black text-gray-900">RM{supplier.currentPrice.toFixed(2)}</p>
@@ -180,7 +180,7 @@ export default function SupplierPricesPage() {
             </div>
 
             <div className="mt-auto">
-              <button onClick={() => toggleReason(supplier.id)} className="w-full flex items-center justify-center gap-2 text-sm font-bold text-blue-600 bg-blue-50 py-2 rounded-lg hover:bg-blue-100 transition">
+              <button type='button' onClick={() => toggleReason(supplier.id)} className="w-full flex items-center justify-center gap-2 text-sm font-bold text-blue-600 bg-blue-50 py-2 rounded-lg hover:bg-blue-100 transition" aria-labelledby='Show AI reason'>
                 <HelpCircle size={16} /> Why is this happening?
               </button>
               
@@ -188,8 +188,8 @@ export default function SupplierPricesPage() {
                 <div className="mt-3 p-4 bg-gray-50 border border-gray-200 rounded-lg text-xs text-gray-700 space-y-3 animate-in fade-in zoom-in duration-200">
                   <p className="font-bold text-gray-900 border-b pb-1">AI Market Analysis:</p>
                   
-                  {getCustomReasons(supplier.ingredient).map((reason, index) => (
-                    <div key={index} className="flex gap-2 items-start">
+                  {getCustomReasons(supplier.ingredient).map((reason) => (
+                    <div key={crypto.randomUUID()} className="flex gap-2 items-start">
                       <div className="text-red-500 shrink-0 mt-0.5">{reason.icon}</div>
                       <p>{reason.text}</p>
                     </div>

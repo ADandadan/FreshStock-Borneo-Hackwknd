@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { TrendingUp, TrendingDown, Info, Plus, DollarSign, Package } from 'lucide-react';
-import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
-import { Product, SaleEntry, WasteLog } from '@/constants';
+import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import type { Product, SaleEntry, WasteLog } from '@/constants';
 
 export default function SalesTrackerPage() {
   // --- State ---
@@ -108,7 +108,7 @@ export default function SalesTrackerPage() {
 
   useEffect(() => {
       localStorage.setItem("freshstock_misc", JSON.stringify({wasteRate: wasteRate, totalRevenue: totalRevenue, foodSecurityScore: foodSecurityScore}));
-    }, [{wasteRate: 0, totalRevenue: 0, foodSecurityScore: 100}])
+    }, [wasteRate, foodSecurityScore, totalRevenue])
 
   if (!isLoaded) return <div className="p-8">Loading...</div>;
 
@@ -122,7 +122,7 @@ export default function SalesTrackerPage() {
           <p className="text-gray-500 text-lg">Monitor revenue and food security performance</p>
         </div>
         {!showAddForm && (
-          <button 
+          <button type='button'
             onClick={() => setShowAddForm(true)}
             className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-3.5 rounded-xl font-bold flex items-center gap-2 transition shadow-md"
           >
@@ -139,8 +139,9 @@ export default function SalesTrackerPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1.5">Date</label>
-              <input 
+              <label htmlFor='date' className="block text-sm font-semibold text-gray-700 mb-1.5">Date</label>
+              <input
+                id='date' 
                 type="date"
                 value={date} 
                 onChange={(e) => setDate(e.target.value)} 
@@ -148,8 +149,9 @@ export default function SalesTrackerPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1.5">Product</label>
+              <label htmlFor='product' className="block text-sm font-semibold text-gray-700 mb-1.5">Product</label>
               <select 
+                id='product'
                 value={selectedProductId}
                 onChange={(e) => setSelectedProductId(e.target.value)}
                 className="w-full px-4 py-3 bg-orange-50 rounded-lg border border-orange-100 outline-none focus:ring-2 focus:ring-orange-200"
@@ -161,8 +163,9 @@ export default function SalesTrackerPage() {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1.5">Quantity Sold</label>
-              <input 
+              <label htmlFor='qty-sold' className="block text-sm font-semibold text-gray-700 mb-1.5">Quantity Sold</label>
+              <input
+                id='qty-sold' 
                 type="number"
                 value={quantitySold} 
                 onChange={(e) => setQuantitySold(e.target.value)} 
@@ -173,13 +176,13 @@ export default function SalesTrackerPage() {
           </div>
 
           <div className="flex gap-4">
-            <button 
+            <button type='button'
               onClick={handleLogSale} 
               className="flex-1 bg-orange-500 hover:bg-orange-600 text-white py-4 rounded-xl font-bold text-lg shadow-lg transition"
             >
               Submit Sale
             </button>
-            <button 
+            <button type='button'
               onClick={() => setShowAddForm(false)} 
               className="px-10 py-4 bg-white border border-gray-200 rounded-xl font-bold text-gray-500 hover:bg-gray-50 transition"
             >
@@ -237,7 +240,7 @@ export default function SalesTrackerPage() {
         <div className="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm">
           <h2 className="text-xl font-bold mb-6">Revenue Trend</h2>
           <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={revenueByDate}>
+            <LineChart data={revenueByDate} accessibilityLayer>
               <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f3f4f6" />
               <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{fill: '#9ca3af', fontSize: 12}} />
               <YAxis axisLine={false} tickLine={false} tick={{fill: '#9ca3af', fontSize: 12}} />
@@ -253,7 +256,7 @@ export default function SalesTrackerPage() {
             <BarChart data={[
               { name: "Waste Rate", value: parseFloat(wasteRate as string) },
               { name: "Overstock Rate", value: parseFloat(overstockRate as string) }
-            ]}>
+            ]} accessibilityLayer>
               <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f3f4f6" />
               <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: '#9ca3af', fontSize: 12}} />
               <YAxis axisLine={false} tickLine={false} tick={{fill: '#9ca3af', fontSize: 12}} />
@@ -274,7 +277,7 @@ export default function SalesTrackerPage() {
               {bestSelling.slice(0, 5).map((item, idx) => (
                 <div key={item.product.id} className="flex items-center justify-between pb-4 border-b border-gray-50 last:border-0 last:pb-0">
                   <div className="flex items-center gap-4">
-                    <div className="w-8 h-8 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center font-bold text-sm">
+                    <div className="w-8 h-8 rounded-full bg-orange-100 text-orange-700 flex items-center justify-center font-bold text-sm">
                       {idx + 1}
                     </div>
                     <div>
@@ -282,7 +285,7 @@ export default function SalesTrackerPage() {
                       <p className="text-xs text-gray-500">{item.totalSold} units sold</p>
                     </div>
                   </div>
-                  <p className="font-bold text-green-600">RM {item.totalRev.toFixed(2)}</p>
+                  <p className="font-bold text-green-700">RM {item.totalRev.toFixed(2)}</p>
                 </div>
               ))}
             </div>
@@ -294,7 +297,7 @@ export default function SalesTrackerPage() {
               {lowPerforming.slice(0, 5).map((item, idx) => (
                 <div key={item.product.id} className="flex items-center justify-between pb-4 border-b border-gray-50 last:border-0 last:pb-0">
                   <div className="flex items-center gap-4">
-                    <div className="w-8 h-8 rounded-full bg-red-50 text-red-500 flex items-center justify-center font-bold text-sm">
+                    <div className="w-8 h-8 rounded-full bg-red-50 text-red-700 flex items-center justify-center font-bold text-sm">
                       {idx + 1}
                     </div>
                     <div>
@@ -316,10 +319,10 @@ export default function SalesTrackerPage() {
           <div className="bg-green-50 p-6 rounded-xl border border-green-100 flex flex-col justify-center items-center text-center mb-6 flex-1">
             <p className="text-sm text-green-800 font-bold uppercase tracking-wider mb-1">Food Security Score</p>
             <p className="text-6xl font-black text-green-600 mb-2">{foodSecurityScore}</p>
-            <p className="text-xs text-green-700 font-medium bg-green-200/50 px-3 py-1 rounded-full">Out of 100</p>
+            <p className="text-xs text-green-800 font-medium bg-green-200/50 px-3 py-1 rounded-full">Out of 100</p>
           </div>
 
-          <button 
+          <button type='button'
             onClick={() => setShowInfo(!showInfo)}
             className="w-full py-3 border-2 border-green-100 text-green-700 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-green-50 transition"
           >

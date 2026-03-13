@@ -6,7 +6,7 @@ import {
   Ban, Snowflake, Ship, Bug, ArrowLeft, AlertTriangle, Info 
 } from 'lucide-react';
 
-import { Scenario, Product } from '@/constants';
+import type { Scenario, Product } from '@/constants';
 
 const SCENARIOS: Scenario[] = [
   // Climate & Natural Disaster
@@ -132,7 +132,7 @@ export default function SituationSolverPage() {
 
     return (
       <div className="p-10 bg-[#FFFCF6] min-h-screen font-sans">
-        <button 
+        <button type='button'
           onClick={() => setSelectedScenario(null)} 
           className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm font-semibold mb-6 hover:bg-gray-50 transition"
         >
@@ -144,7 +144,7 @@ export default function SituationSolverPage() {
           <div className="flex items-center gap-3 mb-4">
             <div className="p-3 bg-orange-50 rounded-xl">{selectedScenario.icon}</div>
             <div>
-              <p className="text-xs text-gray-400 font-bold uppercase tracking-tight">{selectedScenario.category}</p>
+              <p className="text-xs text-gray-500 font-bold uppercase tracking-tight">{selectedScenario.category}</p>
               <h2 className="text-2xl font-black text-gray-950 leading-tight">{selectedScenario.title}</h2>
             </div>
           </div>
@@ -179,19 +179,19 @@ export default function SituationSolverPage() {
         {/* Main Analysis Card */}
         <div className="bg-white p-8 rounded-3xl border border-orange-100 shadow-sm border-b-4 border-b-orange-400">
           <h3 className="text-lg font-bold text-gray-900">Impact Analysis on Your Business</h3>
-          <p className="text-sm text-gray-400 mb-8">Based on your current inventory</p>
+          <p className="text-sm text-gray-500 mb-8">Based on your current inventory</p>
 
           <div className="grid grid-cols-3 gap-6 mb-10">
             <div className="bg-white border border-gray-50 p-6 rounded-2xl text-center shadow-sm">
-              <p className="text-[10px] text-gray-400 font-bold uppercase mb-2">Revenue Impact</p>
+              <p className="text-[10px] text-gray-500 font-bold uppercase mb-2">Revenue Impact</p>
               <p className="text-3xl font-black text-red-500">-RM {revenueImpact}</p>
             </div>
             <div className="bg-white border border-gray-50 p-6 rounded-2xl text-center shadow-sm">
-              <p className="text-[10px] text-gray-400 font-bold uppercase mb-2">Stock Shortage</p>
+              <p className="text-[10px] text-gray-500 font-bold uppercase mb-2">Stock Shortage</p>
               <p className="text-3xl font-black text-yellow-500">{stockShortage} units</p>
             </div>
             <div className="bg-white border border-gray-50 p-6 rounded-2xl text-center shadow-sm">
-              <p className="text-[10px] text-gray-400 font-bold uppercase mb-2">Risk Level</p>
+              <p className="text-[10px] text-gray-500 font-bold uppercase mb-2">Risk Level</p>
               <p className={`text-3xl font-black ${riskColors[selectedScenario.riskLevel]}`}>{selectedScenario.riskLevel}</p>
             </div>
           </div>
@@ -216,9 +216,9 @@ export default function SituationSolverPage() {
           <div className="bg-[#FFF4E5] p-6 rounded-2xl border border-orange-100">
             <h4 className="flex items-center gap-2 text-sm font-bold text-orange-900 mb-4 italic">💡 Recommendations</h4>
             <ul className="space-y-3">
-              {selectedScenario.recommendations.map((rec, i) => (
-                <li key={i} className="text-xs text-gray-700 flex gap-2 leading-relaxed">
-                  <span className="text-orange-500 font-bold">•</span> {rec}
+              {selectedScenario.recommendations.map((rec) => (
+                <li key={crypto.randomUUID()} className="text-xs text-gray-700 flex gap-2 leading-relaxed">
+                  <span className="text-orange-700 font-bold">•</span> {rec}
                 </li>
               ))}
             </ul>
@@ -246,10 +246,10 @@ export default function SituationSolverPage() {
                   <div className="p-2 bg-orange-50 rounded-lg">{scenario.icon}</div>
                   <div>
                     <h3 className="font-bold text-gray-950 text-sm leading-tight">{scenario.title}</h3>
-                    <p className="text-[10px] text-gray-400 font-bold uppercase">{cat}</p>
+                    <p className="text-[10px] text-gray-500 font-bold uppercase">{cat}</p>
                   </div>
                 </div>
-                <button 
+                <button type='button'
                   onClick={() => setSelectedScenario(scenario)} 
                   className="w-full py-4 bg-white border border-gray-100 text-gray-500 text-sm font-bold rounded-2xl 
                              hover:bg-emerald-500 hover:text-white hover:border-emerald-500 hover:shadow-lg hover:shadow-emerald-200
