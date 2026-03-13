@@ -142,7 +142,7 @@ Generate your key at [Google AI Studio](https://aistudio.google.com/app/apikey).
 | [Lucide](https://lucide.dev/) | Icons |
 | [Gemini API](https://ai.google.dev/gemini-api/) | AI suggestions |
 | [Recharts](https://recharts.org/) | Charts |
-| [ESLint](https://eslint.org/) | Linting |
+| [Biome](https://biomejs.dev/) | Linting |
 
 ---
 
