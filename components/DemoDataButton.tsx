@@ -8,6 +8,7 @@ const SALES_KEY = 'freshstock_sales'
 const SUPPLIERS_KEY = 'freshstock_suppliers'
 const PRODUCTS_KEY = 'freshstock_products'
 const PREDICTIONS_KEY = 'freshstock_predictions'
+const MISC_KEY = 'freshstock_misc'
 
 
 const MOCK_PREDICTIONS: PredictionResult[] = [
@@ -129,6 +130,12 @@ const MOCK_SALES: SaleEntry[] = [
   { id: 's14', date: daysAgo(0), productId: 5, productName: 'Fresh Chicken (1kg)', sellingPrice: 12.00, quantitySold: 11, revenue: 132.00 },
 ];
 
+const MOCK_MISC = {
+  wasteRate: 14.5,
+  totalRevenue: 2119.5,
+  foodSecurityScore: 66
+}
+
 export function DemoDataButton() {
   const [loaded, setLoaded] = useState(false)
 
@@ -140,7 +147,7 @@ export function DemoDataButton() {
 	const predictions = localStorage.getItem(PREDICTIONS_KEY)
 
 	if (waste !== null || sales !== null || suppliers !== null || products !== null) {
-    	setLoaded(true);
+    setLoaded(true);
 	}
   }, [])
 
@@ -149,7 +156,8 @@ export function DemoDataButton() {
     localStorage.setItem(SALES_KEY, JSON.stringify(MOCK_SALES))
     localStorage.setItem(SUPPLIERS_KEY, JSON.stringify(MOCK_SUPPLIERS))
     localStorage.setItem(PRODUCTS_KEY, JSON.stringify(MOCK_PRODUCTS))
-	localStorage.setItem(PREDICTIONS_KEY, JSON.stringify(MOCK_PREDICTIONS))
+    localStorage.setItem(PREDICTIONS_KEY, JSON.stringify(MOCK_PREDICTIONS))
+    localStorage.setItem(MISC_KEY, JSON.stringify(MOCK_MISC))
     setLoaded(true)
     window.location.reload()
   }
