@@ -1,12 +1,57 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { WasteLog, SaleEntry, Product } from "@/constants";
+import { WasteLog, SaleEntry, Product, PredictionResult } from "@/constants";
 
 const WASTE_LOGS_KEY = 'freshstock_waste'
 const SALES_KEY = 'freshstock_sales'
 const SUPPLIERS_KEY = 'freshstock_suppliers'
 const PRODUCTS_KEY = 'freshstock_products'
+const PREDICTIONS_KEY = 'freshstock_predictions'
+
+
+const MOCK_PREDICTIONS: PredictionResult[] = [
+  {
+    id: 'pred-1',
+    productName: 'Fresh Tomatoes',
+    avgDailySales: 10.7,
+    currentStock: 45,
+    nextWeekNeeded: 75,
+    isShortage: false
+  },
+  {
+    id: 'pred-2',
+    productName: 'Nasi Lemak Pre-pack',
+    avgDailySales: 12.5,
+    currentStock: 8,
+    nextWeekNeeded: 88,
+    isShortage: true  // 88 needed, only 8 in stock
+  },
+  {
+    id: 'pred-3',
+    productName: 'Cabbage Heads',
+    avgDailySales: 4.3,
+    currentStock: 20,
+    nextWeekNeeded: 30,
+    isShortage: false
+  },
+  {
+    id: 'pred-4',
+    productName: 'White Rice (10kg)',
+    avgDailySales: 9.3,
+    currentStock: 30,
+    nextWeekNeeded: 65,
+    isShortage: true  // 65 needed, only 30 in stock
+  },
+  {
+    id: 'pred-5',
+    productName: 'Fresh Chicken (1kg)',
+    avgDailySales: 17.0,
+    currentStock: 15,
+    nextWeekNeeded: 119,
+    isShortage: true  // highest velocity item, critically short
+  },
+];
 
 const MOCK_SUPPLIERS = [
     { 
@@ -92,6 +137,7 @@ export function DemoDataButton() {
 	const sales = localStorage.getItem(SALES_KEY);
 	const suppliers = localStorage.getItem(SUPPLIERS_KEY);
 	const products = localStorage.getItem(PRODUCTS_KEY);
+	const predictions = localStorage.getItem(PREDICTIONS_KEY)
 
 	if (waste !== null || sales !== null || suppliers !== null || products !== null) {
     	setLoaded(true);
@@ -103,6 +149,7 @@ export function DemoDataButton() {
     localStorage.setItem(SALES_KEY, JSON.stringify(MOCK_SALES))
     localStorage.setItem(SUPPLIERS_KEY, JSON.stringify(MOCK_SUPPLIERS))
     localStorage.setItem(PRODUCTS_KEY, JSON.stringify(MOCK_PRODUCTS))
+	localStorage.setItem(PREDICTIONS_KEY, JSON.stringify(MOCK_PREDICTIONS))
     setLoaded(true)
     window.location.reload()
   }
