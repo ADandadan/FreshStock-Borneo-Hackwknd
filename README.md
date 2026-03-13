@@ -2,9 +2,9 @@
 
 FreshStock is a Next.js web app developed specifically for [BorNEO HackWknd 2026](https://www.borneohackwknd.org/) hackathon. FreshStock helps small-to-medium food businesses like *kedai runcit*, *pasar malam* vendors, and small restaurant operators manage inventory and reduce food waste through a single dashboard. It combines stock tracking, sales data, and AI-powered suggestions to give business owners a clearer picture of what's selling, what's expiring, and what needs restocking, without requiring any technical expertise.
 
-> [Report PDF](https://github.com/ADandadan/FreshStock-Borneo-Hackwknd/blob/8f5bf8a77e67a1731f3e8a9ca669d996aa70028b/Report%20FreshStock%20-%20Ochobot.pdf)
-> [Video Demo](https://youtu.be/jHwBN1RFCus)
-> [Live Demo](https://freshstock.vercel.app/)
+> [Report PDF](https://github.com/ADandadan/FreshStock-Borneo-Hackwknd/blob/8f5bf8a77e67a1731f3e8a9ca669d996aa70028b/Report%20FreshStock%20-%20Ochobot.pdf) |
+> [Video Demo](https://youtu.be/jHwBN1RFCus)  |
+> [Live Website Demo](https://freshstock.vercel.app/)
 
 ---
 
