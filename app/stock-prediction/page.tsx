@@ -51,7 +51,7 @@ export default function StockPredictionPage() {
   };
 
   return (
-    <div className="ml-50 p-10 bg-[#FFFCF6] min-h-screen font-sans">
+    <div className="p-10 bg-[#FFFCF6] min-h-screen font-sans">
       <header className="mb-10">
         <h1 className="text-4xl font-extrabold text-gray-950 mb-1">Stock Prediction</h1>
         <p className="text-gray-500 text-lg">Forecast inventory needs based on sales data</p>

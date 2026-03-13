@@ -89,10 +89,10 @@ export default function SupplierPricesPage() {
   };
 
   // Prevent hydration mismatch by not rendering the list until loaded
-  if (!isLoaded) return <div className="ml-64 p-10 bg-[#FFFCF6] min-h-screen">Loading...</div>;
+  if (!isLoaded) return <div className="p-10 bg-[#FFFCF6] min-h-screen">Loading...</div>;
 
   return (
-    <div className="ml-64 p-10 bg-[#FFFCF6] min-h-screen font-sans">
+    <div className="p-10 bg-[#FFFCF6] min-h-screen font-sans">
       <header className="mb-10">
         <h1 className="text-4xl font-extrabold text-gray-950 mb-1">Market Price Intelligence</h1>
         <p className="text-gray-500 text-lg">Track ingredient inflation, margin impact, and global factors</p>

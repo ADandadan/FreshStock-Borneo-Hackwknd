@@ -135,49 +135,47 @@ export default function Sidebar(props: Props) {
   return (
     <>
       <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;700;800&display=swap" rel="stylesheet" />
-      <Box sx={{ display: 'flex' }}>
-        <CssBaseline />
+      <CssBaseline />
 
-        <IconButton
-          aria-label="open drawer"
-          onClick={handleDrawerToggle}
+      <IconButton
+        aria-label="open drawer"
+        onClick={handleDrawerToggle}
+        sx={{
+          backgroundColor: 'white',
+          '&:hover': { backgroundColor: '#f3f2f1' },
+          position: 'fixed', top: 10, left: 10,
+          display: { sm: 'none' }, zIndex: 1200,
+        }}
+      >
+        <MenuIcon />
+      </IconButton>
+
+      <Box component="nav" sx={{ width: { xs: 0, sm: drawerWidth }, flexShrink: { sm: 0 } }}>
+        <Drawer
+          container={container}
+          variant="temporary"
+          open={mobileOpen}
+          onTransitionEnd={handleDrawerTransitionEnd}
+          onClose={handleDrawerClose}
           sx={{
-            backgroundColor: 'white',
-            '&:hover': { backgroundColor: '#f3f2f1' },
-            position: 'fixed', top: 10, left: 10,
-            display: { sm: 'none' }, zIndex: 1200,
+            display: { xs: 'block', sm: 'none' },
+            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth, border: 'none', boxShadow: '4px 0 24px rgba(0,0,0,0.08)' },
           }}
+          slotProps={{ root: { keepMounted: true } }}
         >
-          <MenuIcon />
-        </IconButton>
+          {drawer}
+        </Drawer>
 
-        <Box component="nav" sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}>
-          <Drawer
-            container={container}
-            variant="temporary"
-            open={mobileOpen}
-            onTransitionEnd={handleDrawerTransitionEnd}
-            onClose={handleDrawerClose}
-            sx={{
-              display: { xs: 'block', sm: 'none' },
-              '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth, border: 'none', boxShadow: '4px 0 24px rgba(0,0,0,0.08)' },
-            }}
-            slotProps={{ root: { keepMounted: true } }}
-          >
-            {drawer}
-          </Drawer>
-
-          <Drawer
-            variant="permanent"
-            sx={{
-              display: { xs: 'none', sm: 'block' },
-              '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth, border: 'none', boxShadow: '4px 0 20px rgba(0,0,0,0.06)' },
-            }}
-            open
-          >
-            {drawer}
-          </Drawer>
-        </Box>
+        <Drawer
+          variant="permanent"
+          sx={{
+            display: { xs: 'none', sm: 'block' },
+            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth, border: 'none', boxShadow: '4px 0 20px rgba(0,0,0,0.06)' },
+          }}
+          open
+        >
+          {drawer}
+        </Drawer>
       </Box>
     </>
   );

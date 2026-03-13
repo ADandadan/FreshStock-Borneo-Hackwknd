@@ -151,12 +151,11 @@ export default function DashboardPage() {
   },
 ];
 
-  if (!isLoaded) return <div className="ml-64 p-8">Loading...</div>;
+  if (!isLoaded) return <div className="p-8">Loading...</div>;
 
   return (
     <Box
       sx={{
-        ml: { sm: `${drawerWidth}px` },
         minHeight: "100vh",
         backgroundColor: "#fdf6ef",
         p: { xs: 3, sm: 4 },

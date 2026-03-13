@@ -112,7 +112,7 @@ export default function WasteTrackerPage() {
   const totalFinancialLoss = wasteLogs.reduce((sum, log) => sum + log.costLost, 0);
 
   return (
-    <div className="ml-50 p-10 bg-[#FFFCF6] min-h-screen font-sans">
+    <div className="p-10 bg-[#FFFCF6] min-h-screen font-sans">
       <header className="mb-10">
         <h1 className="text-4xl font-extrabold text-gray-950 mb-1">Waste & Impact Tracker</h1>
         <p className="text-gray-500 text-lg">Calculate loss, waste rates, and discover sustainable solutions</p>

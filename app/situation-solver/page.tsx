@@ -131,7 +131,7 @@ export default function SituationSolverPage() {
     const riskColors = { LOW: 'text-green-500', MEDIUM: 'text-yellow-500', HIGH: 'text-orange-500', CRITICAL: 'text-red-600' };
 
     return (
-      <div className="ml-50 p-10 bg-[#FFFCF6] min-h-screen font-sans">
+      <div className="p-10 bg-[#FFFCF6] min-h-screen font-sans">
         <button 
           onClick={() => setSelectedScenario(null)} 
           className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm font-semibold mb-6 hover:bg-gray-50 transition"
@@ -230,7 +230,7 @@ export default function SituationSolverPage() {
 
   // --- GRID VIEW (Main Selection Page) ---
   return (
-    <div className="ml-50 p-10 bg-[#FFFCF6] min-h-screen font-sans">
+    <div className="p-10 bg-[#FFFCF6] min-h-screen font-sans">
       <header className="mb-10">
         <h1 className="text-4xl font-extrabold text-gray-950 mb-1">Situation Problem Solver</h1>
         <p className="text-gray-500 text-lg">Simulate market scenarios and understand their impacts</p>

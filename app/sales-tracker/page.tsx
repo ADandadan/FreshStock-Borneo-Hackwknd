@@ -115,10 +115,10 @@ export default function SalesTrackerPage() {
       localStorage.setItem("freshstock_misc", JSON.stringify({wasteRate: wasteRate, totalRevenue: totalRevenue, foodSecurityScore: foodSecurityScore}));
     }, [{wasteRate: 0, totalRevenue: 0, foodSecurityScore: 100}])
 
-  if (!isLoaded) return <div className="ml-64 p-8">Loading...</div>;
+  if (!isLoaded) return <div className="p-8">Loading...</div>;
 
   return (
-    <div className="ml-50 p-10 bg-[#FFFCF6] min-h-screen font-sans">
+    <div className="p-10 bg-[#FFFCF6] min-h-screen font-sans">
       
       {/* Header Section */}
       <div className="flex justify-between items-center mb-10">
